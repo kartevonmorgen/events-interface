@@ -2,7 +2,7 @@
 
 Events Interface is a Wordpress Plugin that converts the common used Events Calendars in Wordpress to a Standard Interface, which can be used by other Plugins, which want to deal with events in Wordpress.
 
-The Plugin depends on the "WP Libraries" - Wordpress Plugin which need to be installed and activated first.
+The Plugin depends on the ["WP Libraries"](https://github.com/kartevonmorgen/wp-libraries) - Wordpress Plugin which need to be installed and activated first.
 
 On the "Events Interface" Page some default settings can be entered.
 * Calendar plugin: All the available and activated Calendars (and supported by Events Interface) are listed here. You can select one which "Events Interface" will use. The following calendars are supported for now:
