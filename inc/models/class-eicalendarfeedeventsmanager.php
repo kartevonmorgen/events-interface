@@ -300,24 +300,6 @@ class EICalendarFeedEventsManager extends EICalendarFeed
 
       $result->set_event_id($emEvent->event_id);
     
-      if( $is_new )
-      {
-        // only update if the event is new
-        $post = array(
-          'ID' => $emEvent->post_id,
-          'post_author' => $eiEvent->get_owner_user_id());
-        wp_update_post( $post );
-      }
-
-      // == SLUG ist ID from Feed
-      // we need to write it here in the 'Event'-Post
-      // again, on the previous save method,
-      // Events Manager overwrites the event_slug
-      $emEvent->event_slug = $eiEvent->get_uid();
-      $post = array(
-        'ID' => $emEvent->post_id,
-        'post_name' => $eiEvent->get_uid());
-      wp_update_post( $post );
 
       if((!empty( $eiEvent->get_location_name())) && 
          get_option( 'dbem_locations_enabled' ) )
@@ -345,7 +327,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
       if((!empty( $eiEvent->get_tags())) &&
         get_option('dbem_tags_enabled'))
       {
-        $emTags = $this->save_event_tags($eiEvent, $result);
+        $emTags = $this->save_event_tags($emEvent, $eiEvent, $result);
         if($result->has_error())
         {
           return $result;
@@ -354,6 +336,25 @@ class EICalendarFeedEventsManager extends EICalendarFeed
       }
 
       $emEvent->save();
+
+      if( $is_new )
+      {
+        // only update if the event is new
+        $post = array(
+          'ID' => $emEvent->post_id,
+          'post_author' => $eiEvent->get_owner_user_id());
+        wp_update_post( $post );
+      }
+
+      // == SLUG ist ID from Feed
+      // we need to write it here in the 'Event'-Post
+      // again, on the previous save method,
+      // Events Manager overwrites the event_slug
+      $emEvent->event_slug = $eiEvent->get_uid();
+      $post = array(
+        'ID' => $emEvent->post_id,
+        'post_name' => $eiEvent->get_uid());
+      wp_update_post( $post );
 
       // Set the event_id and return the object.
       return $result;
@@ -400,7 +401,10 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     {
       $filters['town'] = $eiEvent->get_location_country();
     }
-    $findEmLocations = EM_Locations::get($filter);
+    if(!empty( $filters ))
+    {
+      $findEmLocations = EM_Locations::get($filters);
+    }
 
     if(!empty($findEmLocations))
     {
@@ -501,7 +505,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     return $emCategories;
   }
 
-  private function save_event_tags($eiEvent, $result)
+  private function save_event_tags($emEvent, $eiEvent, $result)
   {
 
     $term_tag_ids = array();
@@ -530,12 +534,16 @@ class EICalendarFeedEventsManager extends EICalendarFeed
       }
     }
     
-    $emTags = new EM_Tags($term_tag_ids);
-    $emTags->blog_id  = $eiEvent->get_blog_id();
-    $emTags->event_id = $result->get_event_id();
+    $emTags = new EM_Tags($emEvent);
     if ( property_exists( $emTags, 'owner'   ) == FALSE)
     {
       $emTags->owner = $eiEvent->get_owner_user_id();
+    }
+    $emTags->blog_id  = $eiEvent->get_blog_id();
+    $emTags->event_id = $result->get_event_id();
+    foreach($term_tag_ids as $term_tag_id)
+    {
+      $emTags->terms[$term_tag_id] = new EM_Tag($term_tag_id);
     }
 
     $emTags->save(); 
