@@ -379,52 +379,68 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     $filter = array();
     if(!empty( $eiEvent->get_location_name()))
     {
-      $filters['name'] = $eiEvent->get_location_name();
-    }
-    if(!empty( $eiEvent->get_location_address()))
-    {
-      $filters['address'] = $eiEvent->get_location_address();
+      $filters['search'] = $eiEvent->get_location_name();
     }
     if(!empty( $eiEvent->get_location_zip()))
     {
       $filters['postcode'] = $eiEvent->get_location_zip();
     }
-    if(!empty( $eiEvent->get_location_city()))
-    {
-      $filters['town'] = $eiEvent->get_location_city();
-    }
-    if(!empty( $eiEvent->get_location_state()))
-    {
-      $filters['town'] = $eiEvent->get_location_state();
-    }
     if(!empty( $eiEvent->get_location_country()))
     {
-      $filters['town'] = $eiEvent->get_location_country();
+      $filters['country'] = $eiEvent->get_location_country();
     }
     if(!empty( $filters ))
     {
       $findEmLocations = EM_Locations::get($filters);
+      if(empty($findEmLocations))
+      {
+        // If we do not find a location by name, 
+        // then we look if the address fits
+        if(!empty( $eiEvent->get_location_address()))
+        {
+          $filters['search'] = $eiEvent->get_location_address();
+          $findEmLocations = EM_Locations::get($filters);
+        }
+      }
     }
 
     if(!empty($findEmLocations))
     {
       $emLocation = reset($findEmLocations);
-      $emLocation->location_name = $eiEvent->get_location_name();
     }
     else
     {
       $emLocation = new EM_Location();
-      $emLocation->location_name = $eiEvent->get_location_name();
-      $emLocation->location_address = $eiEvent->get_location_address();
-      $emLocation->location_postcode = $eiEvent->get_location_zip();
-      $emLocation->location_town = $eiEvent->get_location_city();
-      $emLocation->location_state = $eiEvent->get_location_state();
-      $emLocation->location_country = $eiEvent->get_location_country();
+      $emLocation->owner = $eiEvent->get_owner_user_id();
+      $emLocation->post_content = '';
       $emLocation->post_status = 'publish';
       $emLocation->location_status = 1;
-      $emLocation->post_content = '';
-      $emLocation->owner = $eiEvent->get_owner_user_id();
       $is_new = true;
+    }
+
+    if(!empty($eiEvent->get_location_name()))
+    {
+      $emLocation->location_name = $eiEvent->get_location_name();
+    }
+    if(!empty($eiEvent->get_location_address()))
+    {
+      $emLocation->location_address = $eiEvent->get_location_address();
+    }
+    if(!empty($eiEvent->get_location_zip()))
+    {
+      $emLocation->location_postcode = $eiEvent->get_location_zip();
+    }
+    if(!empty($eiEvent->get_location_city()))
+    {
+      $emLocation->location_town = $eiEvent->get_location_city();
+    }
+    if(!empty($eiEvent->get_location_state()))
+    {
+      $emLocation->location_state = $eiEvent->get_location_state();
+    }
+    if(!empty($eiEvent->get_location_country()))
+    {
+      $emLocation->location_country = $eiEvent->get_location_country();
     }
 
     if( !$emLocation->can_manage('publish_locations', 
