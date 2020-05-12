@@ -49,6 +49,8 @@ class EICalendarEvent
   private $_location_country;
   private $_location_website;
 	private $_location_phone;
+  private $_location_lon;
+	private $_location_lat;
   private $_contact_name;
   private $_contact_info;
   private $_contact_website;
@@ -460,6 +462,26 @@ class EICalendarEvent
 		return $this->_location_phone;
 	}
     
+	public function set_location_lon( $location_lon ) 
+  {
+		$this->_location_lon = $location_lon;
+	}
+
+	public function get_location_lon() 
+  {
+		return $this->_location_lon;
+	}
+    
+	public function set_location_lat( $location_lat ) 
+  {
+		$this->_location_lat = $location_lat;
+	}
+
+	public function get_location_lat() 
+  {
+		return $this->_location_lat;
+	}
+    
   public function set_contact_name( $contact_name ) 
   {
     $this->_contact_name = $contact_name;
@@ -727,6 +749,42 @@ class EICalendarEvent
     return date_i18n( $matches[1], $this->get_end_date() );
   }
 
+  public function fill_lonlat_by_osm_nominatim()
+  {
+    $osm = new OsmAddress();
+    if( !empty ($this->get_location_address() ))
+    {
+      $osm->set_street_and_number( $this->get_location_address());
+    }
+
+    if( !empty ($this->get_location_city()))
+    {
+      $osm->set_town( $this->get_location_city());
+    }
+    
+    if( !empty ($this->get_location_zip()))
+    {
+      $osm->set_postcode( $this->get_location_zip());
+    }
+
+    if( !empty( $this->get_location_country()))
+    {
+      $osm->set_country( $this->get_location_country());
+    }
+
+    $osmN = new OsmNominatim();
+    $osmRet = $osmN->find_by_address($osm);
+    if( !empty($osmRet->get_lon()))
+    {
+      $this->set_location_lon($osmRet->get_lon());
+    }
+    if( !empty($osmRet->get_lat()))
+    {
+      $this->set_location_lat($osmRet->get_lat());
+    }
+  }
+    
+
   private function add_line($caption, $value)
   {
     return ''. $caption . ': ' . $value . PHP_EOL;
@@ -801,6 +859,8 @@ class EICalendarEvent
     $result .= $this->add_line('location_city', $this->get_location_city());
     $result .= $this->add_line('location_state', $this->get_location_state());
     $result .= $this->add_line('location_country', $this->get_location_country());
+    $result .= $this->add_line('location_lon', $this->get_location_lon());
+    $result .= $this->add_line('location_lat', $this->get_location_lat());
     $result .= $this->add_line('excerpt', $this->get_excerpt());
     $result .= $this->add_line('description', $this->get_description());
     return $result;

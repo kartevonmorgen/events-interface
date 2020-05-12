@@ -184,7 +184,9 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     $eiEvent->set_location_state( $location->location_state );
     $eiEvent->set_location_zip( $location->location_postcode );
     $eiEvent->set_location_country( $location->location_country );
-    
+    $eiEvent->set_location_lon( $location->location_longitude );
+    $eiEvent->set_location_lat( $location->location_latitude );
+
     $eiEvent->set_contact_name( $event->event_owner_name );
     $eiEvent->set_contact_email( $event->event_owner_email );
     
@@ -441,6 +443,20 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     if(!empty($eiEvent->get_location_country()))
     {
       $emLocation->location_country = $eiEvent->get_location_country();
+    }
+
+    // Only fill if they are not filed, because a HTTP request
+    // to OSM is expensive.
+    if(empty( $emLocation->location_longitude) || 
+       empty ($emLocation->location_latitude))
+    {
+      if(empty($eiEvent->get_location_lon()) ||
+         empty($eiEvent->get_location_lat()))
+      {
+        $eiEvent->fill_lonlat_by_osm_nominatim();
+      }
+      $emLocation->location_longitude = $eiEvent->get_location_lon();
+      $emLocation->location_latitude = $eiEvent->get_location_lat();
     }
 
     if( !$emLocation->can_manage('publish_locations', 
