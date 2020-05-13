@@ -347,7 +347,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
       $result->set_event_id($emEvent->event_id);
     
 
-      if((!empty( $eiEvent->get_location_name())) && 
+      if((!empty( $eiEvent->get_location())) && 
          get_option( 'dbem_locations_enabled' ) )
       {
         $emLocation = $this->save_event_location($eiEvent, $result);
