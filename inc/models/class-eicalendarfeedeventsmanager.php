@@ -33,7 +33,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     }
   }
 
-  private function em_event_saved($result=NULL, $event_id=NULL)
+  public function em_event_saved($result=NULL, $event_id=NULL)
   {
     if ( $result == TRUE )
     {
