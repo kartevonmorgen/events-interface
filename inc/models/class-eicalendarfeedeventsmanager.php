@@ -33,7 +33,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     }
   }
 
-  public function em_event_saved($result=NULL, $event_id=NULL)
+  private function em_event_saved($result=NULL, $event_id=NULL)
   {
     if ( $result == TRUE )
     {
@@ -49,6 +49,57 @@ class EICalendarFeedEventsManager extends EICalendarFeed
       $this->fire_event_saved($event_id);
     }
   }
+
+  public function init()
+  {
+    if ( !has_action( 'em_location_save_pre', 
+          array( $this, 'em_location_save_pre' )))
+    {
+      add_action( 'em_location_save_pre', 
+                  array( $this, 'em_location_save_pre' ));
+    }
+  }
+
+  /**
+   * If a location is saved, then we try to fill the longitude
+   * and latitude by osm_nominatim()
+   */
+  public function em_location_save_pre($emLocation)
+  {
+    // Only fill if they are not filed, because a HTTP request
+    // to OSM is expensive.
+    if(empty($emLocation))    
+    {
+      return;
+    }
+
+    //if(empty($emLocation->longitude) ||
+    //   empty($emLocation->latitude))
+    //{
+      $eiEventLocation = $this->get_ei_event_location($emLocation);
+      $eiEventLocation->fill_lonlat_by_osm_nominatim();
+      $this->fill_em_location($emLocation, $eiEventLocation);
+    //}
+  }
+
+  private function get_ei_event_location($emLocation)
+  {
+    if(empty($emLocation))
+    {
+      return null;
+    }
+    $eiEventLocation = new EICalendarEventLocation( 
+                             $emLocation->location_name );
+    $eiEventLocation->set_address( $emLocation->location_address );
+    $eiEventLocation->set_city( $emLocation->location_town );
+    $eiEventLocation->set_state( $emLocation->location_state );
+    $eiEventLocation->set_zip( $emLocation->location_postcode );
+    $eiEventLocation->set_country( $emLocation->location_country );
+    $eiEventLocation->set_lon( $emLocation->location_longitude );
+    $eiEventLocation->set_lat( $emLocation->location_latitude );
+    return $eiEventLocation;
+  }
+
 
   /**
    * Retrieve the EICalendarEvent object for a determinated
@@ -178,14 +229,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
 		$eiEvent->set_published_date( $event->post_date );
 		$eiEvent->set_updated_date( $event->post_modified );
 
-    $eiEvent->set_location_name( $location->location_name );
-    $eiEvent->set_location_address( $location->location_address );
-    $eiEvent->set_location_city( $location->location_town );
-    $eiEvent->set_location_state( $location->location_state );
-    $eiEvent->set_location_zip( $location->location_postcode );
-    $eiEvent->set_location_country( $location->location_country );
-    $eiEvent->set_location_lon( $location->location_longitude );
-    $eiEvent->set_location_lat( $location->location_latitude );
+    $eiEvent->set_location( $this->get_ei_event_location($location));
 
     $eiEvent->set_contact_name( $event->event_owner_name );
     $eiEvent->set_contact_email( $event->event_owner_email );
@@ -218,7 +262,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
       // multiple save actions here.
       // afterwards we enable it again and
       // fire the fire_event_saved(..)
-      $this->set_suppress_save_event(true);
+      $this->set_suppress_event_saved(true);
 
       $args = array(
         'name'        => $eiEvent->get_uid(),
@@ -367,7 +411,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
       // multiple save actions done, we disabled 
       // the fire_event_saved(..) 
       // So we fire it afterwards
-      $this->set_suppress_save_event(false);
+      $this->set_suppress_event_saved(false);
       if( !empty($emEvent ))
       {
         $this->fire_event_saved($emEvent->event_id);
@@ -377,40 +421,12 @@ class EICalendarFeedEventsManager extends EICalendarFeed
 
   private function save_event_location($eiEvent, $result)
   {
-    $is_new = false;
-    $filter = array();
-    if(!empty( $eiEvent->get_location_name()))
-    {
-      $filters['search'] = $eiEvent->get_location_name();
-    }
-    if(!empty( $eiEvent->get_location_zip()))
-    {
-      $filters['postcode'] = $eiEvent->get_location_zip();
-    }
-    if(!empty( $eiEvent->get_location_country()))
-    {
-      $filters['country'] = $eiEvent->get_location_country();
-    }
-    if(!empty( $filters ))
-    {
-      $findEmLocations = EM_Locations::get($filters);
-      if(empty($findEmLocations))
-      {
-        // If we do not find a location by name, 
-        // then we look if the address fits
-        if(!empty( $eiEvent->get_location_address()))
-        {
-          $filters['search'] = $eiEvent->get_location_address();
-          $findEmLocations = EM_Locations::get($filters);
-        }
-      }
-    }
+    $eiEventLocation = $eiEvent->get_location();
 
-    if(!empty($findEmLocations))
-    {
-      $emLocation = reset($findEmLocations);
-    }
-    else
+    $is_new = false;
+    $emLocation = $this->find_em_location($eiEventLocation);
+
+    if(empty($emLocation))
     {
       $emLocation = new EM_Location();
       $emLocation->owner = $eiEvent->get_owner_user_id();
@@ -420,44 +436,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
       $is_new = true;
     }
 
-    if(!empty($eiEvent->get_location_name()))
-    {
-      $emLocation->location_name = $eiEvent->get_location_name();
-    }
-    if(!empty($eiEvent->get_location_address()))
-    {
-      $emLocation->location_address = $eiEvent->get_location_address();
-    }
-    if(!empty($eiEvent->get_location_zip()))
-    {
-      $emLocation->location_postcode = $eiEvent->get_location_zip();
-    }
-    if(!empty($eiEvent->get_location_city()))
-    {
-      $emLocation->location_town = $eiEvent->get_location_city();
-    }
-    if(!empty($eiEvent->get_location_state()))
-    {
-      $emLocation->location_state = $eiEvent->get_location_state();
-    }
-    if(!empty($eiEvent->get_location_country()))
-    {
-      $emLocation->location_country = $eiEvent->get_location_country();
-    }
-
-    // Only fill if they are not filed, because a HTTP request
-    // to OSM is expensive.
-    if(empty( $emLocation->location_longitude) || 
-       empty ($emLocation->location_latitude))
-    {
-      if(empty($eiEvent->get_location_lon()) ||
-         empty($eiEvent->get_location_lat()))
-      {
-        $eiEvent->fill_lonlat_by_osm_nominatim();
-      }
-      $emLocation->location_longitude = $eiEvent->get_location_lon();
-      $emLocation->location_latitude = $eiEvent->get_location_lat();
-    }
+    $this->fill_em_location($emLocation, $eiEventLocation);
 
     if( !$emLocation->can_manage('publish_locations', 
                                  'publish_locations',
@@ -484,6 +463,91 @@ class EICalendarFeedEventsManager extends EICalendarFeed
       $emLocation->owner = $eiEvent->get_owner_user_id();
     }
     return $emLocation;
+  }
+
+  private function find_em_location($eiEventLocation)
+  {
+    $filter = array();
+    if(empty($eiEventLocation))
+    {
+      return null;
+    }
+    
+    if(!empty( $eiEventLocation->get_name()))
+    {
+      $filters['search'] = $eiEventLocation->get_name();
+    }
+    if(!empty( $eiEventLocation->get_zip()))
+    {
+      $filters['postcode'] = $eiEventLocation->get_zip();
+    }
+    if(!empty( $eiEventLocation->get_country()))
+    {
+      $filters['country'] = $eiEventLocation->get_country();
+    }
+    
+    $findEmLocations = array();
+    if(!empty( $filters ))
+    {
+      $findEmLocations = EM_Locations::get($filters);
+      if(empty($findEmLocations))
+      {
+        // If we do not find a location by name, 
+        // then we look if the address fits
+        if(!empty( $eiEventLocation->get_address()))
+        {
+          $filters['search'] = $eiEventLocation->get_address();
+          $findEmLocations = EM_Locations::get($filters);
+        }
+      }
+    }
+
+    if(empty($findEmLocations))
+    {
+      return null;
+    }
+    return reset($findEmLocations);
+  }
+
+  private function fill_em_location($emLocation, $eiEventLocation = null)
+  {
+    if(empty($eiEventLocation))
+    {
+      return;
+    }
+
+    if(!empty($eiEventLocation->get_name()))
+    {
+      $emLocation->location_name = $eiEventLocation->get_name();
+    }
+    if(!empty($eiEventLocation->get_address()))
+    {
+      $emLocation->location_address = $eiEventLocation->get_address();
+    }
+    if(!empty($eiEventLocation->get_zip()))
+    {
+      $emLocation->location_postcode = $eiEventLocation->get_zip();
+    }
+    if(!empty($eiEventLocation->get_city()))
+    {
+      $emLocation->location_town = $eiEventLocation->get_city();
+    }
+    if(!empty($eiEventLocation->get_state()))
+    {
+      $emLocation->location_state = $eiEventLocation->get_state();
+    }
+    if(!empty($eiEventLocation->get_country()))
+    {
+      $emLocation->location_country = $eiEventLocation->get_country();
+    }
+    if(!empty($eiEventLocation->get_lon()))
+    {
+      $emLocation->location_longitude = $eiEventLocation->get_lon();
+    }
+    if(!empty($eiEventLocation->get_lat()))
+    {
+      $emLocation->location_latitude = $eiEventLocation->get_lat();
+    }
   }
 
   private function save_event_categories($eiEvent, $result)

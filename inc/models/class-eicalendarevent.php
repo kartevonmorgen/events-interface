@@ -41,16 +41,6 @@ class EICalendarEvent
 	private $_colour;
 	private $_featured;
 	private $_plugin;
-  private $_location_name;
-  private $_location_address;
-  private $_location_city;
-  private $_location_zip;
-  private $_location_state;
-  private $_location_country;
-  private $_location_website;
-	private $_location_phone;
-  private $_location_lon;
-	private $_location_lat;
   private $_contact_name;
   private $_contact_info;
   private $_contact_website;
@@ -70,6 +60,7 @@ class EICalendarEvent
 	private $_recurrence_text;
 	private $_categories = array();
 	private $_tags = array();
+	private $_location;
 
     const REPEAT_DAY = 'day';
     const REPEAT_MONTH = 'month';
@@ -81,6 +72,7 @@ class EICalendarEvent
       $_event_id = 0;
       $_tags = array();
       $_categories = array();
+      $_location = null;
     }
 
     public static function get_day_text( $number = 1 ) 
@@ -378,110 +370,6 @@ class EICalendarEvent
 		return $this->_featured;
 	}
 
-  public function set_location_name( $location_name ) 
-  {
-    $this->_location_name = $location_name;
-  }
-
-  public function get_location_name() 
-  {
-    return $this->_location_name;
-  }
-
-  public function set_location_address( $location_address ) 
-  {
-    $this->_location_address = $location_address;
-  }
-
-  public function get_location_address() 
-  {
-    return $this->_location_address;
-  }
-
-  public function set_location_zip( $location_zip ) 
-  {
-    $this->_location_zip = $location_zip;
-  }
-
-  public function get_location_zip() 
-  {
-    return $this->_location_zip;
-  }
-
-  public function set_location_city( $location_city ) 
-  {
-    $this->_location_city = $location_city;
-  }
-
-  public function get_location_city() 
-  {
-    return $this->_location_city;
-  }
-
-  public function set_location_state( $location_state ) 
-  {
-    $this->_location_state = $location_state;
-  }
-
-  public function get_location_state() 
-  {
-    return $this->_location_state;
-  }
-
-  public function set_location_country( $location_country ) 
-  {
-    $this->_location_country = $location_country;
-  }
-
-  public function get_location_country() 
-  {
-	  if ( empty( $this->_location_country )) 
-    {
-      return 'DE';
-    }
-    return $this->_location_country;
-  }
-
-  public function set_location_website( $location_website ) 
-  {
-    $this->_location_website = $location_website;
-  }
-
-  public function get_location_website() 
-  {
-    return $this->_location_website;
-  }
-
-	public function set_location_phone( $location_phone ) 
-  {
-		$this->_location_phone = $location_phone;
-	}
-
-	public function get_location_phone() 
-  {
-		return $this->_location_phone;
-	}
-    
-	public function set_location_lon( $location_lon ) 
-  {
-		$this->_location_lon = $location_lon;
-	}
-
-	public function get_location_lon() 
-  {
-		return $this->_location_lon;
-	}
-    
-	public function set_location_lat( $location_lat ) 
-  {
-		$this->_location_lat = $location_lat;
-	}
-
-	public function get_location_lat() 
-  {
-		return $this->_location_lat;
-	}
-    
   public function set_contact_name( $contact_name ) 
   {
     $this->_contact_name = $contact_name;
@@ -728,6 +616,21 @@ class EICalendarEvent
 		return $this->_tags;
 	}
 
+  /*
+   * Set an EICalendarEventLocation object
+   */
+  public function set_location( $location )
+  {
+    $this->_location = $location;
+  }
+
+  /*
+   * Get an EICalendarEventLocation object
+   */
+  public function get_location()
+  {
+    return $this->_location;
+  }
 
   function get_hostname_identifier()
   {
@@ -748,42 +651,6 @@ class EICalendarEvent
   {
     return date_i18n( $matches[1], $this->get_end_date() );
   }
-
-  public function fill_lonlat_by_osm_nominatim()
-  {
-    $osm = new OsmAddress();
-    if( !empty ($this->get_location_address() ))
-    {
-      $osm->set_street_and_number( $this->get_location_address());
-    }
-
-    if( !empty ($this->get_location_city()))
-    {
-      $osm->set_town( $this->get_location_city());
-    }
-    
-    if( !empty ($this->get_location_zip()))
-    {
-      $osm->set_postcode( $this->get_location_zip());
-    }
-
-    if( !empty( $this->get_location_country()))
-    {
-      $osm->set_country( $this->get_location_country());
-    }
-
-    $osmN = new OsmNominatim();
-    $osmRet = $osmN->find_by_address($osm);
-    if( !empty($osmRet->get_lon()))
-    {
-      $this->set_location_lon($osmRet->get_lon());
-    }
-    if( !empty($osmRet->get_lat()))
-    {
-      $this->set_location_lat($osmRet->get_lat());
-    }
-  }
-    
 
   private function add_line($caption, $value)
   {
@@ -853,14 +720,18 @@ class EICalendarEvent
 
     $result .= $this->add_line('published_date', $this->get_published_date());
     $result .= $this->add_line('updated_date', $this->get_updated_date());
-    $result .= $this->add_line('location_name', $this->get_location_name());
-    $result .= $this->add_line('location_address', $this->get_location_address());
-    $result .= $this->add_line('location_zip', $this->get_location_zip());
-    $result .= $this->add_line('location_city', $this->get_location_city());
-    $result .= $this->add_line('location_state', $this->get_location_state());
-    $result .= $this->add_line('location_country', $this->get_location_country());
-    $result .= $this->add_line('location_lon', $this->get_location_lon());
-    $result .= $this->add_line('location_lat', $this->get_location_lat());
+    $location = $this->get_location();
+    if(!empty ( $location ))
+    {
+      $result .= $this->add_line('location_name', $location->get_name());
+      $result .= $this->add_line('location_address', $location->get_address());
+      $result .= $this->add_line('location_zip', $location->get_zip());
+      $result .= $this->add_line('location_city', $location->get_city());
+      $result .= $this->add_line('location_state', $location->get_state());
+      $result .= $this->add_line('location_country', $location->get_country());
+      $result .= $this->add_line('location_lon', $location->get_lon());
+      $result .= $this->add_line('location_lat', $location->get_lat());
+    }
     $result .= $this->add_line('excerpt', $this->get_excerpt());
     $result .= $this->add_line('description', $this->get_description());
     return $result;

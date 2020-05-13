@@ -56,6 +56,7 @@ class EICalendarFeedFactory
 	      $feed = new $class_name;
 	      if ( $feed->is_feed_available() )
         {
+          $feed->init();
 	        array_push($this->load_available_calendarfeeds, $feed);
         }
 		  }

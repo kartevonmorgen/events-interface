@@ -181,12 +181,13 @@ class EICalendarFeedAi1ec extends EICalendarFeed
     $term_tags = get_the_terms( $post->ID, 'events_tags' );
     $eiEvent->set_tags( EICalendarEventTag::create_tags($term_tags));
 
-    $eiEvent->set_location_name( $event->get( 'venue' ));
-    $eiEvent->set_location_address( $street);
-    $eiEvent->set_location_city( $city );
-    $eiEvent->set_location_state( $event->get( 'province' ));
-    $eiEvent->set_location_zip( $zipcode );
-    $eiEvent->set_location_country( $event->get( 'country' ));
+    $eiEventLocation = new EICalendarEventLocation( $event->get( 'venue' ));
+    $eiEventLocation->set_address( $street);
+    $eiEventLocation->set_city( $city );
+    $eiEventLocation->set_state( $event->get( 'province' ));
+    $eiEventLocation->set_zip( $zipcode );
+    $eiEventLocation->set_country( $event->get( 'country' ));
+    $eiEvent->set_location( $eiEventLocation);
 
     $eiEvent->set_contact_name( $event->get( 'contact_name' ));
     $eiEvent->set_contact_email( $event->get( 'contact_email' ));

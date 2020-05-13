@@ -17,13 +17,18 @@ if ( ! class_exists( 'EICalendarFeed' ) )
   */
 abstract class EICalendarFeed 
 {
-  private $_eiSavedListeners = array();
-  private $_suppress_save_event = false;
+  private $_eiEventSavedListeners = array();
+  private $_suppress_event_saved = false;
 
   protected $REPEAT_DAY;
   protected $REPEAT_WEEK;
   protected $REPEAT_MONTH;
   protected $REPEAT_YEAR;
+
+  public function init()
+  {
+
+  }
 
   /**
    * Translate local feed frequency into
@@ -53,7 +58,7 @@ abstract class EICalendarFeed
    */
   public function add_event_saved_listener($listener)
   {
-    array_push( $this->_eiSavedListeners, $listener );
+    array_push( $this->_eiEventSavedListeners, $listener );
   }
 
   /**
@@ -62,12 +67,12 @@ abstract class EICalendarFeed
    */
   private function get_event_saved_listeners()
   {
-    return $this->_eiSavedListeners;
+    return $this->_eiEventSavedListeners;
   }
 
   protected function fire_event_saved($event_id)
   {
-    if( $this->is_save_event_suppressed() )
+    if( $this->is_event_saved_suppressed() )
     {
       return;
     }
@@ -87,18 +92,18 @@ abstract class EICalendarFeed
    *                                      fire_event_saved(..) will not
    *                                      be executed. 
    */
-  public function set_suppress_save_event($suppress_save_event)
+  public function set_suppress_event_saved($suppress)
   {
-    $this->_suppress_save_event = $suppress_save_event;
+    $this->_suppress_event_saved = $suppress;
   }
 
   /**
    * Check if it allowed to execute the fire_event_saved(..)
    * @return boolean
    */
-  public function is_save_event_suppressed()
+  public function is_event_saved_suppressed()
   {
-    return $this->_suppress_save_event;
+    return $this->_suppress_event_saved;
   }
 
   /**
