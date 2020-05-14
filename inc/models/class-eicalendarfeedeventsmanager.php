@@ -94,7 +94,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     $eiEventLocation->set_city( $emLocation->location_town );
     $eiEventLocation->set_state( $emLocation->location_state );
     $eiEventLocation->set_zip( $emLocation->location_postcode );
-    $eiEventLocation->set_country( $emLocation->location_country );
+    $eiEventLocation->set_country_code( $emLocation->location_country );
     $eiEventLocation->set_lon( $emLocation->location_longitude );
     $eiEventLocation->set_lat( $emLocation->location_latitude );
     return $eiEventLocation;
@@ -481,9 +481,9 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     {
       $filters['postcode'] = $eiEventLocation->get_zip();
     }
-    if(!empty( $eiEventLocation->get_country()))
+    if(!empty( $eiEventLocation->get_country_code()))
     {
-      $filters['country'] = $eiEventLocation->get_country();
+      $filters['country'] = $eiEventLocation->get_country_code();
     }
     
     $findEmLocations = array();
@@ -536,9 +536,9 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     {
       $emLocation->location_state = $eiEventLocation->get_state();
     }
-    if(!empty($eiEventLocation->get_country()))
+    if(!empty($eiEventLocation->get_country_code()))
     {
-      $emLocation->location_country = $eiEventLocation->get_country();
+      $emLocation->location_country = $eiEventLocation->get_country_code();
     }
     if(!empty($eiEventLocation->get_lon()))
     {

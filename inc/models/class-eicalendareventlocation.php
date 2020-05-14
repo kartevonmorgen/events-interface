@@ -19,7 +19,7 @@ class EICalendarEventLocation
   private $_city;
   private $_zip;
   private $_state;
-  private $_country;
+  private $_country_code;
   private $_website;
 	private $_phone;
   private $_lon;
@@ -80,18 +80,18 @@ class EICalendarEventLocation
     return $this->_state;
   }
 
-  public function set_country( $country ) 
+  public function set_country_code( $country_code ) 
   {
-    $this->_country = $country;
+    $this->_country_code = $country_code;
   }
 
-  public function get_country() 
+  public function get_country_code() 
   {
-	  if ( empty( $this->_country )) 
+	  if ( empty( $this->_country_code )) 
     {
       return 'DE';
     }
-    return $this->_country;
+    return $this->_country_code;
   }
 
   public function set_website( $website ) 
@@ -152,9 +152,9 @@ class EICalendarEventLocation
       $osm->set_postcode( $this->get_zip());
     }
 
-    if( !empty( $this->get_country()))
+    if( !empty( $this->get_country_code()))
     {
-      $osm->set_country( $this->get_country());
+      $osm->set_country_code( $this->get_country_code());
     }
 
     $osmN = new OsmNominatim();
@@ -183,9 +183,9 @@ class EICalendarEventLocation
       $this->set_zip($osmRet->get_postcode());
     }
     
-    if( !empty($osmRet->get_country()))
+    if( !empty($osmRet->get_country_code()))
     {
-      $this->set_country(strtoupper($osmRet->get_country()));
+      $this->set_country_code(strtoupper($osmRet->get_country_code()));
     }
 
     if( !empty($osmRet->get_lon()))

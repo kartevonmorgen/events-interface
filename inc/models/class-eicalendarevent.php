@@ -728,7 +728,7 @@ class EICalendarEvent
       $result .= $this->add_line('location_zip', $location->get_zip());
       $result .= $this->add_line('location_city', $location->get_city());
       $result .= $this->add_line('location_state', $location->get_state());
-      $result .= $this->add_line('location_country', $location->get_country());
+      $result .= $this->add_line('location_country_code', $location->get_country_code());
       $result .= $this->add_line('location_lon', $location->get_lon());
       $result .= $this->add_line('location_lat', $location->get_lat());
     }

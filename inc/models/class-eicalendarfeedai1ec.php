@@ -186,7 +186,7 @@ class EICalendarFeedAi1ec extends EICalendarFeed
     $eiEventLocation->set_city( $city );
     $eiEventLocation->set_state( $event->get( 'province' ));
     $eiEventLocation->set_zip( $zipcode );
-    $eiEventLocation->set_country( $event->get( 'country' ));
+    $eiEventLocation->set_country_code( $event->get( 'country' ));
     $eiEvent->set_location( $eiEventLocation);
 
     $eiEvent->set_contact_name( $event->get( 'contact_name' ));
