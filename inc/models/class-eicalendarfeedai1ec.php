@@ -16,6 +16,17 @@ if ( ! class_exists( 'EICalendarFeedAi1ec' ) ) {
 class EICalendarFeedAi1ec extends EICalendarFeed 
 {
   /**
+   * Delete the underlying EICalendarEvent object 
+   * for a determinated event_id.
+   * NOT IMPLEMENTED YET
+   *
+   * @param $event_id int
+   */
+  public function delete_event_by_event_id( $event_id )
+  {
+  }
+
+  /**
    * Retrieve the EICalendarEvent object for a determinated
    * event_id.
    * NOT IMPLEMENTED YET

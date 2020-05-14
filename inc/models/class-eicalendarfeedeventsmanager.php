@@ -73,13 +73,19 @@ class EICalendarFeedEventsManager extends EICalendarFeed
       return;
     }
 
-    //if(empty($emLocation->longitude) ||
-    //   empty($emLocation->latitude))
-    //{
-      $eiEventLocation = $this->get_ei_event_location($emLocation);
-      $eiEventLocation->fill_lonlat_by_osm_nominatim();
-      $this->fill_em_location($emLocation, $eiEventLocation);
-    //}
+    if(!get_option('ei_fill_lanlon_coordinates_over_osm', false))
+    {
+      return;
+    }
+
+    $eiEventLocation = $this->get_ei_event_location($emLocation);
+    if(empty($eiEventLocation))
+    {
+      return;
+    }
+
+    $eiEventLocation->fill_lonlat_by_osm_nominatim();
+    $this->fill_em_location($emLocation, $eiEventLocation);
   }
 
   private function get_ei_event_location($emLocation)
@@ -100,6 +106,30 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     return $eiEventLocation;
   }
 
+  /**
+   * Delete the underlying EICalendarEvent object 
+   * for a determinated event_id.
+   *
+   * @param $event_id int: should be the eiEvent->get_event_id()
+   */
+  public function delete_event_by_event_id( $event_id )
+  {
+    if(empty($event_id))
+    {
+      return;
+    }
+
+	  $event = em_get_event( $event_id );
+    if(empty($event))
+    {
+      return;
+    }
+
+    echo 'Delete'. $event_id;
+
+    $force_delete = get_option('ei_delete_permanently', false);
+    $event->delete($force_delete);
+  }
 
   /**
    * Retrieve the EICalendarEvent object for a determinated
@@ -111,7 +141,11 @@ class EICalendarFeedEventsManager extends EICalendarFeed
    */
   public function get_event_by_event_id( $event_id ) 
   {
-    $filters = array($event_id);
+    if(empty($event_id))
+    {
+      return;
+    }
+
 	  $event = em_get_event( $event_id );
     if(empty($event))
     {

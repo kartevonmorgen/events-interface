@@ -107,6 +107,14 @@ abstract class EICalendarFeed
   }
 
   /**
+   * Delete the underlying EICalendarEvent object 
+   * for a determinated event_id.
+   *
+   * @param $event_id int: should be the eiEvent->get_event_id()
+   */
+  abstract function delete_event_by_event_id( $event_id );
+
+  /**
    * Retrieve the EICalendarEvent object for a determinated
    * event_id.
    *

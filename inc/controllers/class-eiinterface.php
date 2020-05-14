@@ -133,6 +133,16 @@ class EIInterface
     $feed->add_event_saved_listener($listener);
   }
 
+  public function delete_event_by_event_id( $event_id )
+  {
+    $feed = $this->get_event_calendar_feed();
+    if(empty($feed))
+    {
+      return;
+    }
+    return $feed->delete_event_by_event_id( $event_id );
+  }
+
   /** 
    * Get a EICalendarEvent from the activated Calendar
    * selected by the $event_id from this activated Calendar

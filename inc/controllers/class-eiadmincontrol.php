@@ -62,6 +62,11 @@ class EIAdminControl
                             'Timerange to select in days');
     $section->add_textfield('ei_event_category', 
                             'Category (slug) to select');
+    $section->add_checkbox('ei_delete_permanently', 
+                           'Delete events permanently, or put them in the Trash');
+    $section->add_checkbox('ei_fill_lanlon_coordinates_over_osm', 
+                           'Fill longitude und latitude over Open Street Maps Nominatim');
+
     $section->add_textarea('ei_event_saved', 
                            'Last saved events');
     
