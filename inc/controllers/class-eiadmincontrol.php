@@ -63,9 +63,9 @@ class EIAdminControl
     $section->add_textfield('ei_event_category', 
                             'Category (slug) to select');
     $section->add_checkbox('ei_delete_permanently', 
-                           'Delete events permanently, or put them in the Trash');
+                           'Delete events permanently (instead of putting them in the trash)');
     $section->add_checkbox('ei_fill_lanlon_coordinates_over_osm', 
-                           'Fill longitude und latitude over Open Street Maps Nominatim');
+                           'Fill longitude und latitude automatically by Open Street Maps Nominatim wenn a location is saved in the calendar plugin');
 
     $section->add_textarea('ei_event_saved', 
                            'Last saved events');
