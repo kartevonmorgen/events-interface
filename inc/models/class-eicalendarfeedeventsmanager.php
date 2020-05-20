@@ -175,6 +175,8 @@ class EICalendarFeedEventsManager extends EICalendarFeed
   {
     $retval = array();
 
+    $event_cat = str_replace(',','&', $event_cat);
+
     $filters = array(
 		   'category' => $event_cat,
        'status' => 'publish',
@@ -221,6 +223,12 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     }
     // END HACK
 
+    $emCategories = new EM_Categories($event);
+    $categories = $emCategories->terms; 
+
+    $emTags = new EM_Tags($event);
+    $tags = $emTags->terms;
+
 	  $location = $event->get_location();
     $image_src = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), apply_filters( 'ei_image_size', 'medium' ) );
     if ( !empty( $image_src ) )
@@ -242,8 +250,6 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     //die;
 
 
-    $categories = get_the_terms($post->ID, 'event-categories');
-    $tags = get_the_terms($post->ID, 'event-tags');
 
     $eiEvent = new EICalendarEvent();
     $eiEvent->set_title( $event->event_name );
