@@ -617,7 +617,7 @@ class EICalendarEvent
 	}
 
   /*
-   * Set an EICalendarEventLocation object
+   * Set an WPLocation object
    */
   public function set_location( $location )
   {
@@ -625,7 +625,7 @@ class EICalendarEvent
   }
 
   /*
-   * Get an EICalendarEventLocation object
+   * Get an WPLocation object
    */
   public function get_location()
   {
@@ -724,7 +724,8 @@ class EICalendarEvent
     if(!empty ( $location ))
     {
       $result .= $this->add_line('location_name', $location->get_name());
-      $result .= $this->add_line('location_address', $location->get_address());
+      $result .= $this->add_line('location_street', $location->get_street());
+      $result .= $this->add_line('location_streetnumber', $location->get_streetnumber());
       $result .= $this->add_line('location_zip', $location->get_zip());
       $result .= $this->add_line('location_city', $location->get_city());
       $result .= $this->add_line('location_state', $location->get_state());

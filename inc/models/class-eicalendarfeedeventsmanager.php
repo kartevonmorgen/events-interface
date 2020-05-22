@@ -84,7 +84,9 @@ class EICalendarFeedEventsManager extends EICalendarFeed
       return;
     }
 
-    $eiEventLocation->fill_lonlat_by_osm_nominatim();
+    $wpLocationHelper = new WPLocationHelper();
+
+    $wpLocationHelper->fill_by_osm_nominatim($eiEventLocation);
     $this->fill_em_location($emLocation, $eiEventLocation);
   }
 
@@ -94,13 +96,21 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     {
       return null;
     }
-    $eiEventLocation = new EICalendarEventLocation( 
-                             $emLocation->location_name );
-    $eiEventLocation->set_address( $emLocation->location_address );
-    $eiEventLocation->set_city( $emLocation->location_town );
-    $eiEventLocation->set_state( $emLocation->location_state );
-    $eiEventLocation->set_zip( $emLocation->location_postcode );
-    $eiEventLocation->set_country_code( $emLocation->location_country );
+
+    $eiEventLocation = new WPLocation();
+    $wpLocH = new WPLocationHelper();
+    $wpLocH->set_name($eiEventLocation, $emLocation->location_name);
+
+    $wpLocH->set_address( $eiEventLocation, 
+                          $emLocation->location_address );
+    $wpLocH->set_city( $eiEventLocation, 
+                       $emLocation->location_town );
+    $wpLocH->set_state( $eiEventLocation, 
+                        $emLocation->location_state );
+    $wpLocH->set_zip( $eiEventLocation, 
+                      $emLocation->location_postcode );
+    $wpLocH->set_country_code( $eiEventLocation, 
+                               $emLocation->location_country );
     $eiEventLocation->set_lon( $emLocation->location_longitude );
     $eiEventLocation->set_lat( $emLocation->location_latitude );
     return $eiEventLocation;
@@ -507,6 +517,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
 
   private function find_em_location($eiEventLocation)
   {
+    $wpLocationHelper = new WPLocationHelper();
     $filter = array();
     if(empty($eiEventLocation))
     {
@@ -534,9 +545,11 @@ class EICalendarFeedEventsManager extends EICalendarFeed
       {
         // If we do not find a location by name, 
         // then we look if the address fits
-        if(!empty( $eiEventLocation->get_address()))
+        $address = $wpLocationHelper->get_address(
+                                        $eiEventLocation);
+        if(!empty( $address) )
         {
-          $filters['search'] = $eiEventLocation->get_address();
+          $filters['search'] = $address;
           $findEmLocations = EM_Locations::get($filters);
         }
       }
@@ -560,30 +573,40 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     {
       $emLocation->location_name = $eiEventLocation->get_name();
     }
-    if(!empty($eiEventLocation->get_address()))
+
+    $wpLocationHelper = new WPLocationHelper();
+    $address = $wpLocationHelper->get_address(
+                                    $eiEventLocation);
+    if(!empty($address))
     {
-      $emLocation->location_address = $eiEventLocation->get_address();
+      $emLocation->location_address = $address;
     }
+
     if(!empty($eiEventLocation->get_zip()))
     {
       $emLocation->location_postcode = $eiEventLocation->get_zip();
     }
+
     if(!empty($eiEventLocation->get_city()))
     {
       $emLocation->location_town = $eiEventLocation->get_city();
     }
+
     if(!empty($eiEventLocation->get_state()))
     {
       $emLocation->location_state = $eiEventLocation->get_state();
     }
+
     if(!empty($eiEventLocation->get_country_code()))
     {
       $emLocation->location_country = $eiEventLocation->get_country_code();
     }
+
     if(!empty($eiEventLocation->get_lon()))
     {
       $emLocation->location_longitude = $eiEventLocation->get_lon();
     }
+
     if(!empty($eiEventLocation->get_lat()))
     {
       $emLocation->location_latitude = $eiEventLocation->get_lat();

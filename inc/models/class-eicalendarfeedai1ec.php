@@ -146,32 +146,16 @@ class EICalendarFeedAi1ec extends EICalendarFeed
       $permalink .= ( ( false !== strpos( $permalink, '?' ) ) ? '&instance_id=' : '?instance_id=' ) . intval( $instance_id );
     }
 
-    $address = $event->get( 'address' );
-    $address_arr = preg_split("/[,]+/", $address);
-    if(count($address_arr) > 0)
-    {
-      $street = trim($address_arr[0]);
-    }
-          
-    if(count($address_arr) > 1)
-    {
-      $zipcode = trim($address_arr[1]);
-      if(is_numeric($zipcode))
-      {
-        if(count($address_arr) > 2)
-        {
-          $city = trim($address_arr[2]);
-        }
-      }
-      else
-      {
-        $city = $zipcode;
-        $zipcode = '';
-      }
-    }
+    $wpLocH = new WPLocationHelper();
+
+    $address = $event->get('address');
+    $eiLoc = $wpLocH->create_from_free_text_format($address);
+    $wpLocH->set_name( $eiLoc, $event->get('venue'));
+    $wpLocH->set_state( $eiLoc, $event->get('province'));
+    $wpLocH->set_country_code( $eiLoc, $event->get('country'));
 
     $eiEvent = new EICalendarEvent();
-    $eiEvent->set_title( stripslashes_deep( $post->post_title ));
+    $eiEvent->set_title( stripslashes_deep($post->post_title));
     $eiEvent->set_description( stripslashes_deep( $post->post_content ));
     $eiEvent->set_excerpt( stripslashes_deep( $post->post_excerpt ));
     $eiEvent->set_link(  $permalink );
@@ -192,13 +176,10 @@ class EICalendarFeedAi1ec extends EICalendarFeed
     $term_tags = get_the_terms( $post->ID, 'events_tags' );
     $eiEvent->set_tags( EICalendarEventTag::create_tags($term_tags));
 
-    $eiEventLocation = new EICalendarEventLocation( $event->get( 'venue' ));
-    $eiEventLocation->set_address( $street);
-    $eiEventLocation->set_city( $city );
-    $eiEventLocation->set_state( $event->get( 'province' ));
-    $eiEventLocation->set_zip( $zipcode );
-    $eiEventLocation->set_country_code( $event->get( 'country' ));
-    $eiEvent->set_location( $eiEventLocation);
+    if($wpLocH->is_valid($eiLoc))
+    {
+      $eiEvent->set_location( $eiLoc);
+    }
 
     $eiEvent->set_contact_name( $event->get( 'contact_name' ));
     $eiEvent->set_contact_email( $event->get( 'contact_email' ));
