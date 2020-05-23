@@ -62,10 +62,11 @@ class EIAdminControl
                             'Timerange to select in days');
     $section->add_textfield('ei_event_category', 
                             'Category (slug) to select');
-    $section->add_checkbox('ei_delete_permanently', 
-                           'Delete events permanently (instead of putting them in the trash)');
-    $field = $section->add_checkbox('ei_fill_lanlon_coordinates_over_osm', 
-                           'Fill longitude und latitude automatically by Open Street Maps Nominatim wenn a location is saved in the calendar plugin');
+    $field = $section->add_checkbox('ei_delete_permanently', 
+                                   'Delete events permanently');
+    $field->set_description('If this option is not marked, the events will be putted in the trash');
+    $field = $section->add_checkbox('ei_fill_lanlon_coordinates_over_osm', 'Fill longitude und latitude automatically by OSM');
+    $field->set_description('Fill longitude und latitude automatically by Open Street Maps Nominatim wenn a location is saved in the calendar plugin');
 
     $section->add_textarea('ei_event_saved', 
                            'Last saved events');
