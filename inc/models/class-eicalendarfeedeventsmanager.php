@@ -281,8 +281,14 @@ class EICalendarFeedEventsManager extends EICalendarFeed
 
     $eiEvent->set_location( $this->get_ei_event_location($location));
 
-    $eiEvent->set_contact_name( $event->event_owner_name );
-    $eiEvent->set_contact_email( $event->event_owner_email );
+    $emPerson = $event->get_contact();
+    if(!empty($emPerson))
+    {
+      $eiEvent->set_contact_name( $emPerson->display_name );
+      $eiEvent->set_contact_email( $emPerson->user_email );
+      $eiEvent->set_contact_website( $emPerson->user_url );
+      $eiEvent->set_contact_phone( $emPerson->phone );
+    }
     
     $eiEvent->set_event_image_url( $image_url );
     $eiEvent->set_event_cost( ($event->is_free() && !$event->event_rsvp ) ? __( 'FREE', 'events-interface' ) : '??COST??');

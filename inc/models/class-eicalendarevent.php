@@ -733,6 +733,10 @@ class EICalendarEvent
       $result .= $this->add_line('location_lon', $location->get_lon());
       $result .= $this->add_line('location_lat', $location->get_lat());
     }
+    $result .= $this->add_line('contact_name', $this->get_contact_name());
+    $result .= $this->add_line('contact_email', $this->get_contact_email());
+    $result .= $this->add_line('contact_phone', $this->get_contact_phone());
+    $result .= $this->add_line('contact_website', $this->get_contact_website());
     $result .= $this->add_line('excerpt', $this->get_excerpt());
     $result .= $this->add_line('description', $this->get_description());
     return $result;
