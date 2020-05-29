@@ -29,26 +29,53 @@ class EICalendarFeedEventsManager extends EICalendarFeed
 
     if ( !has_filter( 'em_event_save', array( $this, 'em_event_saved' ) ))
     {
-      add_filter( 'em_event_save', array( $this, 'em_event_saved' ) );
+      add_filter( 'em_event_save', array( $this, 'em_event_saved' ), 10, 2 );
     }
   }
 
-  public function em_event_saved($result=NULL, $event_id=NULL)
+  public function em_event_saved($result=NULL, $event=NULL)
   {
     if ( $result == TRUE )
     {
-      if ( empty( $event_id ) ) 
-      {
-        global $EM_Event;
-        if( $EM_Event instanceof EM_Event )
-        {
-          $event_id = $EM_Event->event_id;
-        }
-      }
-
+      $event_id = $event;
       $this->fire_event_saved($event_id);
     }
   }
+
+  /** 
+   * Add a listener when an event is deleted.
+   * Siehe https://wp-events-plugin.com/
+   *               tutorials/saving-custom-event-information/
+   *
+   * @param listener EIEventDeletedListenerIF
+   */
+  public function add_event_deleted_listener($listener)
+  {
+    parent::add_event_deleted_listener($listener);
+
+    if ( !has_filter( 'em_event_delete', array( $this, 'em_event_deleted' ) ))
+    {
+      add_filter( 'em_event_delete', array( $this, 'em_event_deleted' ), 10 , 2 );
+      add_action('trashed_post', array( $this, 'em_event_trashed' ) );
+    }
+  }
+
+  public function em_event_trashed($post_id)
+  {
+    $event = em_get_event($post_id,'post_id');
+    $this->em_event_deleted(true, $event);
+  }
+
+  public function em_event_deleted($result=NULL, $event)
+  {
+    if ( $result == true )
+    {
+      $event_id = $event->event_id;
+      $this->fire_event_deleted($event_id);
+    }
+  }
+
+  /** 
 
   public function init()
   {
@@ -269,6 +296,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     $eiEvent->set_link( $permalink );
 
     $eiEvent->set_event_id( $event->event_id );
+    $eiEvent->set_post_id( $event->post_id );
     $eiEvent->set_blog_id( $event->blog_id );
 
 		$eiEvent->set_plugin( $this->get_identifier() );
@@ -401,6 +429,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
       $emEvent->save();
 
       $result->set_event_id($emEvent->event_id);
+      $result->set_post_id($emEvent->post_id);
     
 
       if((!empty( $eiEvent->get_location())) && 

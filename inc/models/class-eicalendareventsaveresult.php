@@ -19,11 +19,13 @@ class EICalendarEventSaveResult
 {
 	private $_error;
 	private $_event_id;
+	private $_post_id;
 
   public function __construct() 
   {
     $_error = null;
     $_event_id = 0;
+    $_post_id = 0;
   }
 
   public function set_error( $error ) 
@@ -62,6 +64,21 @@ class EICalendarEventSaveResult
     return $this->_event_id;
   }
 
+  public function set_post_id( $post_id ) 
+  {
+    $this->_post_id = $post_id;
+  }
+
+  /**
+   * Return the post_id if the event is saved
+   * succesfull.
+   *
+   * @return int
+   */
+  public function get_post_id()
+  {
+    return $this->_post_id;
+  }
 }
 
 }

@@ -19,6 +19,7 @@ abstract class EICalendarFeed
 {
   private $_eiEventSavedListeners = array();
   private $_suppress_event_saved = false;
+  private $_eiEventDeletedListeners = array();
 
   protected $REPEAT_DAY;
   protected $REPEAT_WEEK;
@@ -104,6 +105,34 @@ abstract class EICalendarFeed
   public function is_event_saved_suppressed()
   {
     return $this->_suppress_event_saved;
+  }
+
+  /** 
+   * Add a listener when an event is delted.
+   *
+   * @param listener EIEventDeletedListenerIF
+   */
+  public function add_event_deleted_listener($listener)
+  {
+    array_push( $this->_eiEventDeletedListeners, $listener );
+  }
+
+  /**
+   * Return all the registered Listeners
+   * @return EIEventSavedListenerIF[]
+   */
+  private function get_event_deleted_listeners()
+  {
+    return $this->_eiEventDeletedListeners;
+  }
+
+  protected function fire_event_deleted($event_id)
+  {
+    $eiEvent = $this->get_event_by_event_id( $event_id );
+    foreach( $this->get_event_deleted_listeners() as $listener )
+    {
+      $listener->event_deleted($eiEvent);
+    }
   }
 
   /**

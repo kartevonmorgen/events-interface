@@ -133,6 +133,22 @@ class EIInterface
     $feed->add_event_saved_listener($listener);
   }
 
+  /** 
+   * Add a listener when an event is deleted for the
+   * activated Calendar
+   *
+   * @param listener EIEventDeletedListenerIF
+   */
+  public function add_event_deleted_listener($listener)
+  {
+    $feed = $this->get_event_calendar_feed();
+    if(empty($feed))
+    {
+      return null;
+    }
+    $feed->add_event_deleted_listener($listener);
+  }
+
   public function delete_event_by_event_id( $event_id )
   {
     $feed = $this->get_event_calendar_feed();

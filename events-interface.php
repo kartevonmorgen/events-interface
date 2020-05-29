@@ -39,6 +39,7 @@ if ( !is_plugin_active( 'wp-libraries/wp-libraries.php' ) )
 
 // -- Models --
 require_once( dirname( __FILE__ ) . '/inc/models/class-eieventsavedlistener.php' );
+require_once( dirname( __FILE__ ) . '/inc/models/class-eieventdeletedlistener.php' );
 require_once( dirname( __FILE__ ) . '/inc/models/class-eicalendareventsaveresult.php' );
 require_once( dirname( __FILE__ ) . '/inc/models/class-eicalendareventtag.php' );
 require_once( dirname( __FILE__ ) . '/inc/models/class-eicalendareventcategory.php' );
