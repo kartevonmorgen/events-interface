@@ -63,6 +63,11 @@ class EICalendarFeedEventsManager extends EICalendarFeed
   public function em_event_trashed($post_id)
   {
     $event = em_get_event($post_id,'post_id');
+    if(empty($event))
+    {
+      // It is not an Event
+      return;
+    }
     $this->em_event_deleted(true, $event);
   }
 
