@@ -80,8 +80,6 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     }
   }
 
-  /** 
-
   public function init()
   {
     if ( !has_action( 'em_location_save_pre', 
@@ -317,7 +315,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     $emPerson = $event->get_contact();
     if(!empty($emPerson))
     {
-      $eiEvent->set_contact_name( $emPerson->display_name );
+      //$eiEvent->set_contact_name( $emPerson->display_name );
       $eiEvent->set_contact_email( $emPerson->user_email );
       $eiEvent->set_contact_website( $emPerson->user_url );
       $eiEvent->set_contact_phone( $emPerson->phone );
