@@ -325,8 +325,8 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     $eiEvent->set_event_cost( ($event->is_free() && !$event->event_rsvp ) ? __( 'FREE', 'events-interface' ) : '??COST??');
 
 		$eiEvent->set_categories( 
-      EICalendarEventCategory::create_categories($categories));
-    $eiEvent->set_tags( EICalendarEventTag::create_tags($tags));
+      WPCategory::create_categories($categories));
+    $eiEvent->set_tags( WPTag::create_tags($tags));
 
     return $eiEvent;
   }

@@ -580,7 +580,7 @@ class EICalendarEvent
   }
 
   /*
-   * Set an array of EICalendarEventCategory objects
+   * Set an array of WPCategory objects
    */
 	public function set_categories( $categories ) 
   {
@@ -588,7 +588,7 @@ class EICalendarEvent
 	}
 
   /*
-   * Add an array of EICalendarEventCategory objects
+   * Add an array of WPCategory objects
    */
 	public function add_category( $category ) 
   {
@@ -596,7 +596,7 @@ class EICalendarEvent
 	}
 
   /*
-   * Return an array of EICalendarEventCategory objects
+   * Return an array of WPCategory objects
    */
 	public function get_categories() 
   {
@@ -604,7 +604,7 @@ class EICalendarEvent
 	}
 
   /*
-   * Add an array of EICalendarEventTag objects
+   * Add an array of WPTag objects
    */
 	public function add_tag( $tag ) 
   {
@@ -612,7 +612,7 @@ class EICalendarEvent
 	}
 
   /*
-   * Set an array of EICalendarEventTag objects
+   * Set an array of WPTag objects
    */
 	public function set_tags( $tags ) 
   {
@@ -620,7 +620,7 @@ class EICalendarEvent
 	}
 
   /*
-   * Return an array of EICalendarEventTag objects
+   * Return an array of WPTag objects
    */
 	public function get_tags() 
   {

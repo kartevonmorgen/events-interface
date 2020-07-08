@@ -171,10 +171,10 @@ class EICalendarFeedAi1ec extends EICalendarFeed
                                                        $post->ID ));
     $term_cats = get_the_terms( $post->ID, 'events_categories' );
 		$eiEvent->set_categories( 
-      EICalendarEventCategory::create_categories($term_cats));
+      WPCategory::create_categories($term_cats));
 
     $term_tags = get_the_terms( $post->ID, 'events_tags' );
-    $eiEvent->set_tags( EICalendarEventTag::create_tags($term_tags));
+    $eiEvent->set_tags( WPTag::create_tags($term_tags));
 
     if($wpLocH->is_valid($eiLoc))
     {
