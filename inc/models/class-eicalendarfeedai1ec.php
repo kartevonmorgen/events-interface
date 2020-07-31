@@ -155,9 +155,7 @@ class EICalendarFeedAi1ec extends EICalendarFeed
     $wpLocH->set_country_code( $eiLoc, $event->get('country'));
 
     $eiEvent = new EICalendarEvent();
-    $eiEvent->set_title( stripslashes_deep($post->post_title));
-    $eiEvent->set_description( stripslashes_deep( $post->post_content ));
-    $eiEvent->set_excerpt( stripslashes_deep( $post->post_excerpt ));
+    $this->fill_event_by_post($post, $eiEvent);
     $eiEvent->set_link(  $permalink );
 		$eiEvent->set_event_id( $post->ID );
 		$eiEvent->set_event_instance_id( $instance_id );

@@ -292,14 +292,12 @@ class EICalendarFeedEventsManager extends EICalendarFeed
 
 
     $eiEvent = new EICalendarEvent();
-    $eiEvent->set_title( $event->event_name );
     $eiEvent->set_slug( $event->event_slug );
-    $eiEvent->set_description( stripslashes_deep( $post->post_content ));
-    $eiEvent->set_excerpt( stripslashes_deep( $post->post_excerpt ));
     $eiEvent->set_link( $permalink );
 
+    $this->fill_event_by_post($post, $eiEvent);
+
     $eiEvent->set_event_id( $event->event_id );
-    $eiEvent->set_post_id( $event->post_id );
     $eiEvent->set_blog_id( $event->blog_id );
 
 		$eiEvent->set_plugin( $this->get_identifier() );

@@ -163,6 +163,30 @@ abstract class EICalendarFeed
    */
   abstract function get_events( $start_date, $end_date, $event_cat );
 
+  protected function fill_event_by_post($post, $eiEvent)
+  {
+    $eiEvent->set_post_id( $post->ID );
+    $eiEvent->set_title( 
+      stripslashes_deep($post->post_title));
+    $eiEvent->set_description( 
+      stripslashes_deep( $post->post_content ));
+
+    if( !empty($post->post_excerpt))
+    {
+      $eiEvent->set_excerpt( 
+        stripslashes_deep( $post->post_excerpt ));
+    }
+    else if( !empty($post->post_content ))
+    {
+      $eiEvent->set_excerpt( 
+        wp_trim_excerpt('', $post));
+    }
+    else
+    {
+      $eiEvent->set_excerpt(''); 
+    }
+  }
+
   /**
    * Save the EICalendarEvent object into the native Event Calendar
    *
