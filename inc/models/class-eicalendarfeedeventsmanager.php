@@ -310,13 +310,40 @@ class EICalendarFeedEventsManager extends EICalendarFeed
 
     $eiEvent->set_location( $this->get_ei_event_location($location));
 
-    $emPerson = $event->get_contact();
-    if(!empty($emPerson))
+    $initiative_id = get_the_author_meta('initiative_id',
+                                         $event->event_owner);
+    if(!empty($initiative_id))
     {
-      //$eiEvent->set_contact_name( $emPerson->display_name );
-      $eiEvent->set_contact_email( $emPerson->user_email );
-      $eiEvent->set_contact_website( $emPerson->user_url );
-      $eiEvent->set_contact_phone( $emPerson->phone );
+      $organisator_name = get_the_title($initiative_id);
+      $eiEvent->set_contact_name( $organisator_name );
+    }
+
+    $emPerson = $event->get_contact();
+    
+    // Email
+    $contactEmail = get_post_meta($post->ID, 
+                                  'Kontaktperson Email', 
+                                   true);
+    if(empty($contactEmail) && !empty($emPerson))
+    {
+      $contactEmail = $emPerson->user_email;
+    }
+    if(!empty($contactEmail))
+    {
+      $eiEvent->set_contact_email( $contactEmail );
+    }
+
+    // Telefon
+    $contactTel = get_post_meta($post->ID, 
+                                  'Kontaktperson Telefon', 
+                                   true);
+    if(empty($contactTel) && !empty($emPerson))
+    {
+      $contactTel = $emPerson->phone;
+    }
+    if(!empty($contactTel))
+    {
+      $eiEvent->set_contact_phone( $contactTel );
     }
     
     $eiEvent->set_event_image_url( $image_url );
