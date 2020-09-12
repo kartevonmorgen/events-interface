@@ -561,8 +561,10 @@ class EICalendarFeedEventsManager extends EICalendarFeed
 
     if ( $emLocation->save() === FALSE )
     {
-      $result->set_error( 'SAVE LOCATION ERROR '. 
-                          implode( ",", $emLocation->get_errors()) );
+      $result->set_error( 'SAVE LOCATION ERROR (user='. 
+                          get_current_user_id() . ') ' .
+                          implode( ",", 
+                            $emLocation->get_errors()) );
       return null;
     }
 
