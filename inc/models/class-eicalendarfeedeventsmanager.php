@@ -115,8 +115,9 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     }
 
     $wpLocationHelper = new WPLocationHelper();
-
-    $wpLocationHelper->fill_by_osm_nominatim($eiEventLocation);
+    $eiEventLocation = 
+      $wpLocationHelper->fill_by_osm_nominatim(
+        $eiEventLocation);
     $this->fill_em_location($emLocation, $eiEventLocation);
   }
 
@@ -143,6 +144,11 @@ class EICalendarFeedEventsManager extends EICalendarFeed
                                $emLocation->location_country );
     $eiEventLocation->set_lon( $emLocation->location_longitude );
     $eiEventLocation->set_lat( $emLocation->location_latitude );
+
+    if($wpLocH->is_location_empty($eiEventLocation))
+    {
+      return null;
+    }
     return $eiEventLocation;
   }
 
@@ -183,7 +189,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
   {
     if(empty($event_id))
     {
-      return;
+      return null;
     }
 
 	  $event = em_get_event( $event_id );
@@ -200,6 +206,28 @@ class EICalendarFeedEventsManager extends EICalendarFeed
 	  $post = get_post( $event->post_id );
     $eiEvent = $this->convert_to_eievent($post, $event);
     return $eiEvent;
+  }
+
+  public function get_event_by_uid($uid)
+  {
+    $args = array(
+      'name'        => $uid,
+      'post_type'   => EM_POST_TYPE_EVENT,
+      'post_status' => array('draft', 'pending', 'publish'),
+      'numberposts' => 1);
+    $em_posts = get_posts($args);
+    if( empty( $em_posts )) 
+    {
+      return null;
+    }
+    
+    $em_post = reset($em_posts);
+    if( empty( $em_post ))
+    {
+      return null;
+    }
+    $em_event = em_get_event($em_post->ID, 'post_id');
+    return $this->convert_to_eievent($em_post, $em_event);
   }
 
   /**
@@ -312,10 +340,13 @@ class EICalendarFeedEventsManager extends EICalendarFeed
 
     $initiative_id = get_the_author_meta('initiative_id',
                                          $event->event_owner);
-    if(!empty($initiative_id))
+
+    $contactName = get_post_meta($post->ID, 
+                                  'Kontaktperson', 
+                                   true);
+    if(!empty($contactName))
     {
-      $organisator_name = get_the_title($initiative_id);
-      $eiEvent->set_contact_name( $organisator_name );
+      $eiEvent->set_contact_name( $contactName );
     }
 
     $emPerson = $event->get_contact();
@@ -324,10 +355,6 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     $contactEmail = get_post_meta($post->ID, 
                                   'Kontaktperson Email', 
                                    true);
-    if(empty($contactEmail) && !empty($emPerson))
-    {
-      $contactEmail = $emPerson->user_email;
-    }
     if(!empty($contactEmail))
     {
       $eiEvent->set_contact_email( $contactEmail );
@@ -337,17 +364,12 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     $contactTel = get_post_meta($post->ID, 
                                   'Kontaktperson Telefon', 
                                    true);
-    if(empty($contactTel) && !empty($emPerson))
-    {
-      $contactTel = $emPerson->phone;
-    }
     if(!empty($contactTel))
     {
       $eiEvent->set_contact_phone( $contactTel );
     }
     
     $eiEvent->set_event_image_url( $image_url );
-    $eiEvent->set_event_cost( ($event->is_free() && !$event->event_rsvp ) ? __( 'FREE', 'events-interface' ) : '??COST??');
 
 		$eiEvent->set_categories( 
       WPCategory::create_categories($categories));
@@ -355,6 +377,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
 
     return $eiEvent;
   }
+
 
   /**
    * Save the EICalendarEvent object into the Events Manager
@@ -765,6 +788,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     }
     $emTags->blog_id  = $eiEvent->get_blog_id();
     $emTags->event_id = $result->get_event_id();
+    $emTags->terms = array();
     foreach($term_tag_ids as $term_tag_id)
     {
       $emTags->terms[$term_tag_id] = new EM_Tag($term_tag_id);

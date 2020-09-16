@@ -685,9 +685,121 @@ class EICalendarEvent
       return false;
     }
 
-    echo 'EQUALS ' . $this->get_uid() . ' == ' . $eiEvent->get_uid();
+    return $this->get_slug() === $eiEvent->get_slug();
+  }
 
-    return $this->get_uid() === $eiEvent->get_uid();
+  public function equals_by_content($eiEvent)
+  {
+    if(!$this->equals($eiEvent))
+    {
+      return false;
+    }
+    if( $this->get_title() !== $eiEvent->get_title())
+    {
+      return false;
+    }
+    if( $this->get_owner_user_id() !== $eiEvent->get_owner_user_id())
+    {
+      return false;
+    }
+    if( $this->get_description() !== $eiEvent->get_description())
+    {
+      return false;
+    }
+    if( $this->get_excerpt() !== $eiEvent->get_excerpt())
+    {
+      return false;
+    }
+    if( $this->get_start_date() !== $eiEvent->get_start_date())
+    {
+      return false;
+    }
+    if( $this->get_end_date() !== $eiEvent->get_end_date())
+    {
+      return false;
+    }
+    if( $this->get_contact_name() !== $eiEvent->get_contact_name())
+    {
+      return false;
+    }
+    if( $this->get_contact_phone() !== $eiEvent->get_contact_phone())
+    {
+      return false;
+    }
+    if( $this->get_contact_website() !== $eiEvent->get_contact_website())
+    {
+      return false;
+    }
+    if( $this->get_event_website() !== $eiEvent->get_event_website())
+    {
+      return false;
+    }
+    if( $this->get_event_cost() !== $eiEvent->get_event_cost())
+    {
+      return false;
+    }
+    if( $this->get_event_image() !== $eiEvent->get_event_image())
+    {
+      return false;
+    }
+
+    foreach($this->get_categories() as $cat)
+    {
+      $found = false;
+      foreach($eiEvent->get_categories() as $cat2)
+      {
+        if($cat->equals($cat2))
+        {
+          $found = true;
+          break;
+        }
+      }
+      if(!$found)
+      {
+        return false;
+      }
+    }
+
+    if(count($this->get_tags()) !== 
+            count($eiEvent->get_tags()))
+    {
+      return false;
+    }
+
+    foreach($this->get_tags() as $tag)
+    {
+      $found = false;
+      foreach($eiEvent->get_tags() as $tag2)
+      {
+        if($tag->equals($tag2))
+        {
+          $found = true;
+          break;
+        }
+      }
+      if(!$found)
+      {
+        return false;
+      }
+    }
+
+    $loc = $this->get_location();
+    $loc2 = $eiEvent->get_location();
+    if(empty($loc2) && !empty($loc))
+    {
+      return false;
+    }
+    if(empty($loc) && !empty($loc2))
+    {
+      return false;
+    }
+    if(!empty($loc) && !$loc->equals($loc2))
+    {
+      return false;
+    }
+
+    //echo 'EQUALS IS TRUE ' . $this->get_title();
+    return true;
   }
 
   public function to_string()

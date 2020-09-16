@@ -161,6 +161,21 @@ class EIInterface
 
   /** 
    * Get a EICalendarEvent from the activated Calendar
+   * selected by the $uid from this activated Calendar
+   * @param uid string
+   */
+  public function get_event_by_uid($uid) 
+  {
+    $feed = $this->get_event_calendar_feed();
+    if(empty($feed))
+    {
+      return null;
+    }
+    return $feed->get_event_by_uid( $uid);
+  }
+
+  /** 
+   * Get a EICalendarEvent from the activated Calendar
    * selected by the $event_id from this activated Calendar
    * @param event_id int
    */

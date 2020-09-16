@@ -153,6 +153,18 @@ abstract class EICalendarFeed
   abstract function get_event_by_event_id( $event_id );
 
   /**
+   * Retrieve the EICalendarEvent object for a determinated
+   * uid.
+   *
+   * @param $uid string: should be the eiEvent->get_uid()
+   * @return EICalendarEvent
+   */
+  public function get_event_by_uid($uid)
+  {
+    return null;
+  }
+
+  /**
    * Retrieve the EICalendarEvent objects for a determinated
    * Time range.
    *
