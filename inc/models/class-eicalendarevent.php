@@ -47,10 +47,6 @@ class EICalendarEvent
   private $_contact_website;
   private $_contact_email;
   private $_contact_phone;
-	private $_organizer_name;
-	private $_organizer_website;
-	private $_organizer_email;
-	private $_organizer_phone;
 	private $_event_website;
   private $_event_cost;
   private $_event_image_url;
@@ -431,46 +427,6 @@ class EICalendarEvent
     return $this->_contact_email;
   }
 
-	public function set_organizer_name( $organizer_name ) 
-  {
-		$this->_organizer_name = $organizer_name;
-	}
-
-	public function get_organizer_name() 
-  {
-		return $this->_organizer_name;
-	}
-
-	public function set_organizer_phone( $organizer_phone ) 
-  {
-		$this->_organizer_phone = $organizer_phone;
-	}
-
-	public function get_organizer_phone() 
-  {
-		return $this->_organizer_phone;
-	}
-
-	public function set_organizer_website( $organizer_website ) 
-  {
-		$this->_organizer_website = $organizer_website;
-	}
-
-	public function get_organizer_website() 
-  {
-		return $this->_organizer_website;
-	}
-
-	public function set_organizer_email( $organizer_email ) 
-  {
-		$this->_organizer_email = $organizer_email;
-	}
-
-	public function get_organizer_email() 
-  {
-		return $this->_organizer_email;
-	}
-
   public function set_event_website( $event_website ) 
   {
     $this->_event_website = $event_website;
@@ -690,57 +646,96 @@ class EICalendarEvent
 
   public function equals_by_content($eiEvent)
   {
-    if(!$this->equals($eiEvent))
+    $result = LogResult::check( $this->get_slug(), 
+                                $eiEvent->get_slug(),
+                                'slug ');
+    if($result->is_false())
     {
-      return false;
+      return $result;
     }
-    if( $this->get_title() !== $eiEvent->get_title())
+    $result = LogResult::check( $this->get_title(),
+                                 $eiEvent->get_title(),
+                                 'title');
+    if($result->is_false())
     {
-      return false;
+      return $result;
     }
-    if( $this->get_owner_user_id() !== $eiEvent->get_owner_user_id())
+    $result = LogResult::check( $this->get_owner_user_id(),
+                                $eiEvent->get_owner_user_id(),
+                                'owner_user_id');
+    if($result->is_false())
     {
-      return false;
+      return $result;
     }
-    if( $this->get_description() !== $eiEvent->get_description())
+    $result = LogResult::check( $this->get_description(),
+                                $eiEvent->get_description(),
+                                'description');
+    if($result->is_false())
     {
-      return false;
+      return $result;
     }
-    if( $this->get_excerpt() !== $eiEvent->get_excerpt())
+    $result = LogResult::check( $this->get_excerpt(),
+                                $eiEvent->get_excerpt(),
+                                'excerpt');
+    if($result->is_false())
     {
-      return false;
+      return $result;
     }
-    if( $this->get_start_date() !== $eiEvent->get_start_date())
+    $result = LogResult::check( $this->get_start_date(),
+                                $eiEvent->get_start_date(),
+                                'start_date');
+    if($result->is_false())
     {
-      return false;
+      return $result;
     }
-    if( $this->get_end_date() !== $eiEvent->get_end_date())
+    $result = LogResult::check( $this->get_end_date(),
+                                $eiEvent->get_end_date(),
+                                'end_date');
+    if($result->is_false())
     {
-      return false;
+      return $result;
     }
-    if( $this->get_contact_name() !== $eiEvent->get_contact_name())
+    $result = LogResult::check( $this->get_contact_name(),
+                                $eiEvent->get_contact_name(),
+                                'contact_name');
+    if($result->is_false())
     {
-      return false;
+      return $result;
     }
-    if( $this->get_contact_phone() !== $eiEvent->get_contact_phone())
+    $result = LogResult::check( $this->get_contact_phone(),
+                                $eiEvent->get_contact_phone(),
+                                'contact_phone');
+    if($result->is_false())
     {
-      return false;
+      return $result;
     }
-    if( $this->get_contact_website() !== $eiEvent->get_contact_website())
+    $result = LogResult::check( $this->get_contact_website(),
+                                $eiEvent->get_contact_website(),
+                                'contact_website');
+    if($result->is_false())
     {
-      return false;
+      return $result;
     }
-    if( $this->get_event_website() !== $eiEvent->get_event_website())
+    $result = LogResult::check( $this->get_event_website(),
+                                $eiEvent->get_event_website(),
+                                'event_website');
+    if($result->is_false())
     {
-      return false;
+      return $result;
     }
-    if( $this->get_event_cost() !== $eiEvent->get_event_cost())
+    $result = LogResult::check( $this->get_event_cost(),
+                                $eiEvent->get_event_cost(),
+                                'event_cost');
+    if($result->is_false())
     {
-      return false;
+      return $result;
     }
-    if( $this->get_event_image() !== $eiEvent->get_event_image())
+    $result = LogResult::check( $this->get_event_image(),
+                                $eiEvent->get_event_image(),
+                                'event_image');
+    if($result->is_false())
     {
-      return false;
+      return $result;
     }
 
     foreach($this->get_categories() as $cat)
@@ -756,14 +751,17 @@ class EICalendarEvent
       }
       if(!$found)
       {
-        return false;
+        return LogResult::false_result(' category (' . 
+          $cat->get_name() . ') not found ');
       }
     }
 
-    if(count($this->get_tags()) !== 
-            count($eiEvent->get_tags()))
+    $result = LogResult::check(count($this->get_tags()), 
+                               count($eiEvent->get_tags()),
+                               'count tag ');
+    if($result->is_false())
     {
-      return false;
+      return $result;
     }
 
     foreach($this->get_tags() as $tag)
@@ -779,7 +777,8 @@ class EICalendarEvent
       }
       if(!$found)
       {
-        return false;
+        return LogResult::false_result(' tag (' . 
+          $cat->get_name() . ') not found ');
       }
     }
 
@@ -787,19 +786,22 @@ class EICalendarEvent
     $loc2 = $eiEvent->get_location();
     if(empty($loc2) && !empty($loc))
     {
-      return false;
+      return LogResult::false_result('loc ' . 
+        $loc->get_name() . ' not equal to null');
     }
     if(empty($loc) && !empty($loc2))
     {
-      return false;
+      return LogResult::false_result('loc2 ' . 
+        $loc2->get_name() . ' not equal to null');
     }
     if(!empty($loc) && !$loc->equals($loc2))
     {
-      return false;
+      return LogResult::false_result('loc ' . 
+        $loc->get_name() . ' not equal to ' . 
+        $loc2->get_name());
     }
 
-    //echo 'EQUALS IS TRUE ' . $this->get_title();
-    return true;
+    return LogResult::true_result('events are equal');
   }
 
   public function to_string()

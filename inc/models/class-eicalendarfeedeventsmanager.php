@@ -342,7 +342,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
                                          $event->event_owner);
 
     $contactName = get_post_meta($post->ID, 
-                                  'Kontaktperson', 
+                                  'contact_name', 
                                    true);
     if(!empty($contactName))
     {
@@ -353,7 +353,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     
     // Email
     $contactEmail = get_post_meta($post->ID, 
-                                  'Kontaktperson Email', 
+                                  'contact_email', 
                                    true);
     if(!empty($contactEmail))
     {
@@ -362,7 +362,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
 
     // Telefon
     $contactTel = get_post_meta($post->ID, 
-                                  'Kontaktperson Telefon', 
+                                  'contact_phone', 
                                    true);
     if(!empty($contactTel))
     {
@@ -537,6 +537,16 @@ class EICalendarFeedEventsManager extends EICalendarFeed
         'ID' => $emEvent->post_id,
         'post_name' => $eiEvent->get_uid());
       wp_update_post( $post );
+
+      update_post_meta($emEvent->post_id, 
+                       'contact_name', 
+                       $eiEvent->get_contact_name());
+      update_post_meta($emEvent->post_id, 
+                       'contact_email', 
+                       $eiEvent->get_contact_email());
+      update_post_meta($emEvent->post_id, 
+                       'contact_phone', 
+                       $eiEvent->get_contact_phone());
 
       // Set the event_id and return the object.
       return $result;

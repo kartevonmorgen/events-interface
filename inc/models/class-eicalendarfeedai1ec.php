@@ -198,10 +198,6 @@ class EICalendarFeedAi1ec extends EICalendarFeed
     //$eiEvent->set_location_website( xx );
 		//$eiEvent->set_location_phone( xx );
     //$eiEvent->set_contact_info( xx );
-		//$eiEvent->set_organizer_name( xx );
-		//$eiEvent->set_organizer_website( xx );
-		//$eiEvent->set_organizer_phone( xx );
-		//$eiEvent->set_organizer_email( xx );
 		//$eiEvent->set_event_image_alt( xx );
     //$eiEvent->set_recurrence_text( xx );
 		//$eiEvent->set_colour( xx );
