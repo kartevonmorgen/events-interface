@@ -373,7 +373,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
                                    true);
     if(!empty($contact_website))
     {
-      $eiEvent->set_contact_phone( $contact_website );
+      $eiEvent->set_contact_website( $contact_website );
     }
     
     $eiEvent->set_event_image_url( $image_url );
