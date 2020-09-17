@@ -341,32 +341,39 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     $initiative_id = get_the_author_meta('initiative_id',
                                          $event->event_owner);
 
-    $contactName = get_post_meta($post->ID, 
+    $contact_name = get_post_meta($post->ID, 
                                   'contact_name', 
                                    true);
-    if(!empty($contactName))
+    if(!empty($contact_name))
     {
-      $eiEvent->set_contact_name( $contactName );
+      $eiEvent->set_contact_name( $contact_name );
     }
 
-    $emPerson = $event->get_contact();
-    
     // Email
-    $contactEmail = get_post_meta($post->ID, 
+    $contact_email = get_post_meta($post->ID, 
                                   'contact_email', 
                                    true);
-    if(!empty($contactEmail))
+    if(!empty($contact_email))
     {
-      $eiEvent->set_contact_email( $contactEmail );
+      $eiEvent->set_contact_email( $contact_email );
     }
 
     // Telefon
-    $contactTel = get_post_meta($post->ID, 
+    $contact_phone = get_post_meta($post->ID, 
                                   'contact_phone', 
                                    true);
-    if(!empty($contactTel))
+    if(!empty($contact_phone))
     {
-      $eiEvent->set_contact_phone( $contactTel );
+      $eiEvent->set_contact_phone( $contact_phone );
+    }
+
+    // Website
+    $contact_website = get_post_meta($post->ID, 
+                                  'contact_website', 
+                                   true);
+    if(!empty($contact_website))
+    {
+      $eiEvent->set_contact_phone( $contact_website );
     }
     
     $eiEvent->set_event_image_url( $image_url );
@@ -547,6 +554,9 @@ class EICalendarFeedEventsManager extends EICalendarFeed
       update_post_meta($emEvent->post_id, 
                        'contact_phone', 
                        $eiEvent->get_contact_phone());
+      update_post_meta($emEvent->post_id, 
+                       'contact_website', 
+                       $eiEvent->get_contact_website());
 
       // Set the event_id and return the object.
       return $result;
