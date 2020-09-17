@@ -672,6 +672,7 @@ class EICalendarEvent
                                 'description');
     if($result->is_false())
     {
+      $result->set_message('descriptions are not equal');
       return $result;
     }
     $result = LogResult::check( $this->get_excerpt(),
