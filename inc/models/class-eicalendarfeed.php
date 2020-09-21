@@ -234,6 +234,10 @@ abstract class EICalendarFeed
     return ( $a->get_start_date() < $b->get_start_date() ) ? -1 : 1;
   }
 
+  public function register_for_kartevonmorgen()
+  {
+  }
+
   /**
    * Fetch description for this calendar feed
    *

@@ -818,6 +818,52 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     return $emTags;
   }
 
+  public function register_for_kartevonmorgen()
+  {
+    add_action('add_meta_boxes', 
+               array($this, 'kvm_meta_boxes'));
+  }
+  
+  function kvm_meta_boxes()
+  {
+      add_meta_box('event_kvm_log', 
+                   'Karte von Morgen Log', 
+                   array($this,
+                         'event_kvm_log_metabox_callback'),
+                   EM_POST_TYPE_EVENT, 
+                   'side',
+                   'low');
+      add_meta_box('kvm_event_id', 
+                   'Karte von Morgen Id', 
+                   array($this,
+                         'kvm_event_id_metabox_callback'),
+                   EM_POST_TYPE_EVENT, 
+                   'side',
+                   'low');
+//      add_meta_box('event_kvm_log', 
+//                   'Styles', 
+//                   'kvm_metabox',
+//                   'event-recurring', 
+//                   'side',
+//                   'low');
+  }
+
+  function event_kvm_log_metabox_callback($post)
+  {
+    wp_nonce_field( 'event_kvm_log_nonce', 'event_kvm_log_nonce' );
+
+    $value = get_post_meta( $post->ID, 'event_kvm_log', true );
+    echo '<textarea style="width:100%" id="event_kvm_log" name="event_kvm_log" disabled="true">' . esc_attr( $value ) . '</textarea>';
+  }
+
+  function kvm_event_id_metabox_callback($post)
+  {
+    wp_nonce_field( 'kvm_event_id_nonce', 'kvm_event_id_nonce' );
+
+    $value = get_post_meta( $post->ID, 'kvm_event_id', true );
+    echo '<textarea style="width:100%" id="kvm_event_id" name="kvm_event_id" disabled="true">' . esc_attr( $value ) . '</textarea>';
+  }
+
   public function get_description() 
   {
     return 'Events Manager';

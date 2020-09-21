@@ -248,6 +248,16 @@ class EIInterface
     }
     return $feed->save_event( $eiEvent);
   }
+
+  public function register_for_kartevonmorgen()
+  {
+    $feed = $this->get_event_calendar_feed();
+    if(empty($feed))
+    {
+      return;
+    }
+    $feed->register_for_kartevonmorgen();
+  }
 }
 
 }
