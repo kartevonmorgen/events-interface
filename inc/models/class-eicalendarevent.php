@@ -288,13 +288,19 @@ class EICalendarEvent
 
   public function get_excerpt() 
   {
-	  if ( ! $this->_excerpt ) 
-    {
-		  $excerpt = strip_shortcodes( $this->get_description() );
-		  $excerpt = strip_tags( $excerpt );
-		  return apply_filters( 'ei_get_excerpt_from_description', apply_filters( 'ei_get_excerpt', wp_trim_words( $excerpt, apply_filters( 'ei_get_excerpt_words', 55, $this ), apply_filters( 'ei_excerpt_more', ' [&hellip;]', $this ) ), $this ), $this );
-	  }
-    return apply_filters( 'ei_get_excerpt', $this->_excerpt, $this );
+    return $this->_excerpt;
+  }
+
+  public function has_excerpt()
+  {
+    return !empty($this->_excerpt);
+  }
+
+  public function generate_excerpt()
+  {
+		$excerpt = strip_shortcodes( $this->get_description() );
+		$excerpt = strip_tags( $excerpt );
+		return apply_filters( 'ei_get_excerpt_from_description', apply_filters( 'ei_get_excerpt', wp_trim_words( $excerpt, apply_filters( 'ei_get_excerpt_words', 55, $this ), apply_filters( 'ei_excerpt_more', ' [..]', $this ) ), $this ), $this );
   }
 
 	public function set_start_date( $start_date ) 

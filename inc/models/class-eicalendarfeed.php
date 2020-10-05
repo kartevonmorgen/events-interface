@@ -189,11 +189,6 @@ abstract class EICalendarFeed
       $eiEvent->set_excerpt( 
         stripslashes_deep( $post->post_excerpt ));
     }
-    else if( !empty($post->post_content ))
-    {
-      $eiEvent->set_excerpt( 
-        wp_trim_excerpt('', $post));
-    }
     else
     {
       $eiEvent->set_excerpt(''); 
