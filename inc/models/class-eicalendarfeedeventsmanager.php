@@ -462,7 +462,14 @@ class EICalendarFeedEventsManager extends EICalendarFeed
       }
 
       $emEvent->event_name = $eiEvent->get_title();
-      $emEvent->post_excerpt = $eiEvent->get_excerpt();
+      if($eiEvent->has_excerpt())
+      {
+        $emEvent->post_excerpt = $eiEvent->get_excerpt();
+      }
+      else
+      {
+        $emEvent->post_excerpt = '';
+      }
       $emEvent->post_content = $eiEvent->get_description();
 
       // Start Date and Time
