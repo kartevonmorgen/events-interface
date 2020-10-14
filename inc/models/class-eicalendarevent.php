@@ -29,6 +29,7 @@ class EICalendarEvent
   private $_link;
   private $_event_id;
   private $_post_id;
+  private $_post_status;
   private $_event_instance_id;
   private $_blog_id;
   private $_owner_user_id;
@@ -238,6 +239,16 @@ class EICalendarEvent
   public function get_post_id() 
   {
     return $this->_post_id;
+  }
+
+  public function set_post_status( $post_status ) 
+  {
+    $this->_post_status = $post_status;
+  }
+
+  public function get_post_status() 
+  {
+    return $this->_post_status;
   }
 
   public function set_event_instance_id( $event_instance_id ) 

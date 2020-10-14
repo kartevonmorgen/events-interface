@@ -27,9 +27,11 @@ class EICalendarFeedEventsManager extends EICalendarFeed
   {
     parent::add_event_saved_listener($listener);
 
-    if ( !has_filter( 'em_event_save', array( $this, 'em_event_saved' ) ))
+    if ( ! has_filter( 'em_event_save', 
+             array( $this, 'em_event_saved' ) ))
     {
-      add_filter( 'em_event_save', array( $this, 'em_event_saved' ), 10, 2 );
+      add_filter( 'em_event_save', 
+        array( $this, 'em_event_saved' ), 10, 2 );
     }
   }
 
@@ -446,7 +448,8 @@ class EICalendarFeedEventsManager extends EICalendarFeed
       {
         // It is an new Event
         $emEvent->force_status = 'pending';
-        if( $emEvent->can_manage( 'publish_events', 
+        if( $eiEvent->get_post_status() === 'publish' &&
+            $emEvent->can_manage( 'publish_events', 
                                   'publish_events',
                                   $eiEvent->get_owner_user_id()))
         {
@@ -455,10 +458,9 @@ class EICalendarFeedEventsManager extends EICalendarFeed
       }
       else
       {
+        // the event exists already, so we do not change
+        // the status it already has.
         $emEvent->force_status = $emEvent->post_status;
-        // the event exists already
-        // $emEvent->event_status = 1;
-        // $emEvent->previous_status = 1;
       }
 
       $emEvent->event_name = $eiEvent->get_title();

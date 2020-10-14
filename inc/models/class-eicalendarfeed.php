@@ -178,6 +178,7 @@ abstract class EICalendarFeed
   protected function fill_event_by_post($post, $eiEvent)
   {
     $eiEvent->set_post_id( $post->ID );
+    $eiEvent->set_post_status( $post->post_status );
     $eiEvent->set_owner_user_id( $post->post_author );
     $eiEvent->set_title( 
       stripslashes_deep($post->post_title));
