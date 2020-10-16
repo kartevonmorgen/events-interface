@@ -840,7 +840,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     $ui_metabox = new UIMetabox('kvm_metabox', 
                                 'Karte von Morgen',
                                 EM_POST_TYPE_EVENT);
-    $field = $ui_metabox->add_textarea('kvm_event_id', 
+    $field = $ui_metabox->add_textfield('kvm_event_id', 
                                         'Id');
     $field->set_disabled(true);
     $field = $ui_metabox->add_textarea('event_kvm_log', 
