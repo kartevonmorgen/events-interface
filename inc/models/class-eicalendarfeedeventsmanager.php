@@ -91,6 +91,11 @@ class EICalendarFeedEventsManager extends EICalendarFeed
                   array( $this, 'em_location_save_pre' ));
     }
 
+    add_filter('em_events_build_sql_conditions',
+               array( $this, 'em_owner_plusextra_query'), 
+               2, 
+               10);
+
     $ui_metabox = new UIMetabox('em_contact_metabox', 
                                 'Kontaktperson',
                                 EM_POST_TYPE_EVENT);
@@ -98,6 +103,53 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     $ui_metabox->add_textfield('contact_email', 'Email');
     $ui_metabox->add_textfield('contact_phone', 'Telefon');
     $ui_metabox->register();
+
+    $ui_metabox = new UIMetabox('em_cooperation_partners', 
+                                'Kooperationspartner',
+                                EM_POST_TYPE_EVENT);
+    $field = $ui_metabox->add_dropdownfield(
+                             'coop_partner_initiative_id', 
+                             'Initiative/Unternehmen');
+    $initiativen = get_posts( 
+      array('post_type' => 'initiative', 
+            'order' => 'ASC',
+            'orderby' => 'post_title'));
+    foreach($initiativen as $initiative)
+    {
+      $field->add_value( $initiative->ID, 
+                         $initiative->post_title );
+    }
+    $ui_metabox->register();
+  }
+
+  /**
+   * Add an extra SQL Condition for a ccoperation partner
+   */
+  function em_owner_plusextra_query($conditions, $args)
+  {
+    $owner = $args['owner'];
+    if(empty($owner))
+    {
+      return $conditions;
+    }
+    $user_meta = get_userdata($owner);
+    if(empty($user_meta))
+    {
+      return $conditions;
+    }
+
+    $initiative_id = $user_meta->initiative_id;
+    if(empty($initiative_id))
+    {
+      return $conditions;
+    }
+
+    global $wpdb;
+
+    $condition = "( " .$conditions['owner'] . " OR " . EM_EVENTS_TABLE.".post_id IN ( SELECT post_id FROM ". $wpdb->postmeta." WHERE meta_value=".$initiative_id." AND meta_key='coop_partner_initiative_id' ))";
+    $conditions['owner'] = $condition;
+    //echo 'PLUS:' . $condition;
+    return $conditions;
   }
     
   /**
