@@ -113,7 +113,11 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     $initiativen = get_posts( 
       array('post_type' => 'initiative', 
             'order' => 'ASC',
-            'orderby' => 'post_title'));
+            'orderby' => 'post_title',
+            'numberposts' => -1));
+
+    $field->add_value( 0, 
+                       'Keine' );
     foreach($initiativen as $initiative)
     {
       $field->add_value( $initiative->ID, 
