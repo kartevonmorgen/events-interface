@@ -91,108 +91,15 @@ class EICalendarFeedEventsManager extends EICalendarFeed
                   array( $this, 'em_location_save_pre' ));
     }
 
-    add_action( 'add_meta_boxes', array( $this, 
-                                    'em_contact_metabox'));
-    
-    add_action( 'save_post', array($this, 
-                             'save_em_contact_metabox' ));  
-
+    $ui_metabox = new UIMetabox('em_contact_metabox', 
+                                'Kontaktperson',
+                                EM_POST_TYPE_EVENT);
+    $ui_metabox->add_textfield('contact_name', 'Name');
+    $ui_metabox->add_textfield('contact_email', 'Email');
+    $ui_metabox->add_textfield('contact_phone', 'Telefon');
+    $ui_metabox->register();
   }
     
-  public function em_contact_metabox() 
-  {
-
-    add_meta_box(
-        'em_contact_metabox',
-        __( 'Kontaktperson', 'site' ),
-        array($this, 'em_contact_metabox_callback'),
-        EM_POST_TYPE_EVENT);
-  }
-
-  public function em_contact_metabox_callback( $post ) 
-  {
-
-    // Add a nonce field so we can check for it later.
-    wp_nonce_field( 'em_contact_metabox_nonce', 
-                    'em_contact_metabox_nonce' );
-
-    echo "<p>Name</p>";
-    $value = get_post_meta( $post->ID, 'contact_name', true );
-    echo "<input type='text' id='contact_name' name='contact_name' value='$value' />";
-
-    echo "<p>Email</p>";
-    $value = get_post_meta( $post->ID, 'contact_email', true );
-    echo "<input type='text' id='contact_email' name='contact_email' value='$value' />";
-
-    echo "<p>Telefon</p>";
-    $value = get_post_meta( $post->ID, 'contact_phone', true );
-    echo "<input type='text' id='contact_phone' name='contact_phone' value='$value' />";
-  }
-
-  /**
-   * When the post is saved, saves our custom data.
-   *
-   * @param int $post_id
-   */
-  public function save_em_contact_metabox( $post_id ) 
-  {
-    // Check if our nonce is set.
-    if ( ! isset( $_POST['em_contact_metabox_nonce'] ) ) 
-    {
-        return;
-    }
-
-    // Verify that the nonce is valid.
-    if ( ! wp_verify_nonce( 
-           $_POST['em_contact_metabox_nonce'], 
-           'em_contact_metabox_nonce' ) ) 
-    {
-      return;
-    }
-
-    // If this is an autosave, our form has 
-    // not been submitted, so we don't want to do anything.
-    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
-    {
-      return;
-    }
-
-    // Check the user's permissions.
-    if ( isset( $_POST['post_type'] ) && 
-         EM_POST_TYPE_EVENT  == $_POST['post_type'] ) 
-    {
-      if ( ! current_user_can( 'edit_post', $post_id ) ) 
-      {
-        return;
-      }
-    }
-    else 
-    {
-      return;
-    }
-
-    /* OK, it's safe for us to save the data now. */
-
-    if ( isset( $_POST['contact_name'] ) ) 
-    {
-      $value = sanitize_text_field( $_POST['contact_name'] );
-      update_post_meta( $post_id, 'contact_name', $value );
-    }
-
-    if ( isset( $_POST['contact_email'] ) ) 
-    {
-      $value = sanitize_text_field( $_POST['contact_email'] );
-      update_post_meta( $post_id, 'contact_email', $value );
-    }
-
-    if ( isset( $_POST['contact_phone'] ) ) 
-    {
-      $value = sanitize_text_field( $_POST['contact_phone'] );
-      update_post_meta( $post_id, 'contact_phone', $value );
-    }
-  }
-
-
   /**
    * If a location is saved, then we try to fill the longitude
    * and latitude by osm_nominatim()
