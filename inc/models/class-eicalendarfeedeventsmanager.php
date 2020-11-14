@@ -554,6 +554,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
       $emEvent->end = strtotime( $emEvent->event_end_date." ".
                                  $emEvent->event_end_time );
 
+      $emEvent->event_all_day = $eiEvent->get_all_day();
 
       // Save first, so the Relations (Locations, Categories
       // und Tags) have an ID to bind on.

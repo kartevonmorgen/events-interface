@@ -25,7 +25,8 @@ class EICalendarFeedFactory
   {
     $this->supported_plugins = array(
       'Ai1ec',
-      'EventsManager');
+      'EventsManager',
+      'TheEventsCalendar');
   }
 
 
