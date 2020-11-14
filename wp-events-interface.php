@@ -27,7 +27,7 @@ defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
 
 $loaderClass = WP_PLUGIN_DIR . '/wp-libraries/inc/lib/plugin/class-wp-pluginloader.php';
-if(!file_exists($loadClass))
+if(!file_exists($loaderClass))
 {
   echo "Das Plugin 'wp-libraries' muss erst installiert und aktiviert werden";
   exit;
