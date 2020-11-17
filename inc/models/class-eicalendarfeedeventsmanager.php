@@ -98,7 +98,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
 
     $ui_metabox = new UIMetabox('em_contact_metabox', 
                                 'Kontaktperson',
-                                EM_POST_TYPE_EVENT);
+                                $this->get_posttype());
     $ui_metabox->add_textfield('contact_name', 'Name');
     $ui_metabox->add_textfield('contact_email', 'Email');
     $ui_metabox->add_textfield('contact_phone', 'Telefon');
@@ -106,7 +106,7 @@ class EICalendarFeedEventsManager extends EICalendarFeed
 
     $ui_metabox = new UIMetabox('em_cooperation_partners', 
                                 'Kooperationspartner',
-                                EM_POST_TYPE_EVENT);
+                                $this->get_posttype());
     $field = $ui_metabox->add_dropdownfield(
                              'coop_partner_initiative_id', 
                              'Initiative/Unternehmen');
@@ -892,19 +892,6 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     return $emTags;
   }
 
-  public function register_for_kartevonmorgen()
-  {
-    $ui_metabox = new UIMetabox('kvm_metabox', 
-                                'Karte von Morgen',
-                                EM_POST_TYPE_EVENT);
-    $field = $ui_metabox->add_textfield('kvm_event_id', 
-                                        'Id');
-    $field->set_disabled(true);
-    $field = $ui_metabox->add_textarea('event_kvm_log', 
-                                       'Logging');
-    $field->set_disabled(true);
-    $ui_metabox->register();
-  }
   
   public function get_description() 
   {
@@ -915,6 +902,12 @@ class EICalendarFeedEventsManager extends EICalendarFeed
   {
     return 'events-manager';
   }
+
+  public function get_posttype() 
+  {
+    return EM_POST_TYPE_EVENT;
+  }
+
 
   public function is_feed_available() 
   {

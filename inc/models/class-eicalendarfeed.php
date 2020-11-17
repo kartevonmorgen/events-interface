@@ -31,6 +31,7 @@ abstract class EICalendarFeed
 
   }
 
+
   /**
    * Translate local feed frequency into
    * @param $frequency
@@ -232,6 +233,16 @@ abstract class EICalendarFeed
 
   public function register_for_kartevonmorgen()
   {
+    $ui_metabox = new UIMetabox('kvm_metabox', 
+                                'Karte von Morgen',
+                                $this->get_posttype());
+    $field = $ui_metabox->add_textfield('kvm_event_id', 
+                                        'Id');
+    $field->set_disabled(true);
+    $field = $ui_metabox->add_textarea('event_kvm_log', 
+                                       'Logging');
+    $field->set_disabled(true);
+    $ui_metabox->register();
   }
 
   /**
@@ -247,6 +258,11 @@ abstract class EICalendarFeed
    * @return string
    */
   public abstract function get_identifier();
+
+  /** 
+   * Returns the posttype for the event
+   */
+  public abstract function get_posttype();
 
   /**
    * Checks of the native Calendar (its Wordpress Plugin)

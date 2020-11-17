@@ -49,9 +49,9 @@ class WPEventsInterfacePluginLoader extends WPPluginLoader
     $this->add_include('/inc/models/class-eicalendarfeed.php' );
 
 // -- Models for Supported plugins --
-//require_once( dirname( __FILE__ ) . '/inc/models/ecncalendarfeedtheeventscalendar.class.php' );
     $this->add_include('/inc/models/class-eicalendarfeedai1ec.php' );
     $this->add_include('/inc/models/class-eicalendarfeedeventsmanager.php' );
+    $this->add_include('/inc/models/class-eicalendarfeedtheeventscalendar.php' );
 
 
 // -- Controllers --

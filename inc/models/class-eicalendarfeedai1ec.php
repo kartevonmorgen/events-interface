@@ -229,6 +229,11 @@ class EICalendarFeedAi1ec extends EICalendarFeed
     return 'all-in-one-event-calendar';
   }
 
+  public function get_posttype()
+  {
+    return AI1EC_POST_TYPE;
+  }
+
   public function is_feed_available() 
   {
     return self::is_feed_available_for_plugin( 'all-in-one-event-calendar/all-in-one-event-calendar.php' );
