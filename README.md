@@ -6,9 +6,9 @@ The Plugin depends on the ["WP Libraries"](https://github.com/kartevonmorgen/wp-
 
 On the "WP Events Interface" Page some default settings can be entered.
 * Calendar plugin: All the available and activated Calendars (and supported by Events Interface) are listed here. You can select one which "Events Interface" will use. The following calendars are supported for now:
-  * The Events Manager
-  * All in One Events Calendar (only loading, saving is not supported at the Moment)
-  * The Events Calendar (only loading, saving is not supported at the Moment)
+  * The Events Manager.
+  * All in One Events Calendar (only loading, saving is not supported at the Moment).
+  * The Events Calendar (only loading, saving is not supported at the Moment).
 * Timerange to select in days: How many days (from now) into the future should be selected when we are loading events.
 * Category (slug) to select: Filter on specific category by the slug name.
 
