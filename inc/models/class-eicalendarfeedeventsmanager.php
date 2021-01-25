@@ -84,6 +84,9 @@ class EICalendarFeedEventsManager extends EICalendarFeed
 
   public function init()
   {
+    add_filter('em_event_output', 
+               array( $this, 'em_event_output'), 10, 4);
+
     if ( !has_action( 'em_location_save_pre', 
           array( $this, 'em_location_save_pre' )))
     {
@@ -125,6 +128,21 @@ class EICalendarFeedEventsManager extends EICalendarFeed
     }
     $ui_metabox->register();
   }
+
+  function em_event_output($event_string, 
+                           $em_event, 
+                           $full_result, 
+                           $target)
+  {
+    $initiative_id = get_the_author_meta('initiative_id',
+                                $em_event->event_owner);
+    $organisator_url = get_the_permalink($initiative_id);
+    $organisator_name = get_the_title($initiative_id);
+
+    $event_string = str_replace('#_ORGANAME', $organisator_name, $event_string); 
+    return str_replace('#_ORGAURL', $organisator_url, $event_string); 
+  }
+
 
   /**
    * Add an extra SQL Condition for a ccoperation partner
