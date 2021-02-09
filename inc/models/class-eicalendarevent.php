@@ -689,7 +689,7 @@ class EICalendarEvent
                                 'description');
     if($result->is_false())
     {
-      $result->set_message('descriptions are not equal');
+      //$result->set_message('descriptions are not equal');
       return $result;
     }
     $result = LogResult::check( $this->get_excerpt(),
@@ -730,6 +730,13 @@ class EICalendarEvent
     $result = LogResult::check( $this->get_contact_website(),
                                 $eiEvent->get_contact_website(),
                                 'contact_website');
+    if($result->is_false())
+    {
+      return $result;
+    }
+    $result = LogResult::check( $this->get_contact_email(),
+                                $eiEvent->get_contact_email(),
+                                'contact_email');
     if($result->is_false())
     {
       return $result;
